@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  product-interface:
+    image: product-interface:latest
+    build: .
+    ports:
+      - "3303:80"
+    restart: always
