@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-interface
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-interface
+  template:
+    metadata:
+      labels:
+        app: web-interface
+    spec:
+      # nodeSelector: 
+      #   zone: docker-desktop
+      containers:
+        - name: web-interface
+          image: web-interface:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
+          envFrom:
+            - secretRef:
+                name: web-config-secret

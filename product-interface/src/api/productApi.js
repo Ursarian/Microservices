@@ -1,17 +1,21 @@
-const BASE_URL = 'http://localhost:3302/products';
+import axios from 'axios';
+
+const BASE_URL = process.env.REACT_APP_PRODUCT_SERVICE;
 
 export async function fetchProducts() {
-    const res = await fetch(BASE_URL);
-    if (!res.ok) throw new Error('Failed to fetch products');
-    return res.json();
+    try {
+        const res = await axios.get(BASE_URL);
+        return res.data;
+    } catch (err) {
+        throw new Error('Failed to fetch products');
+    }
 }
 
 export async function createProduct(product) {
-    const res = await fetch(BASE_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
-    });
-    if (!res.ok) throw new Error('Failed to create product');
-    return res.json();
+    try {
+        const res = await axios.post(BASE_URL, product);
+        return res.data;
+    } catch (err) {
+        throw new Error('Failed to create product');
+    }
 }

@@ -1,10 +1,9 @@
-version: '3.8'
 services:
   product-service:
     image: product-service:latest
     build: .
     ports:
-      - "3302:3002"
+      - "3301:3001"
     environment:
       - MONGO_URI=mongodb://mongo:27017/productdb
     depends_on:
@@ -13,8 +12,8 @@ services:
 
   mongo:
     image: mongo
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27018:27017"
     volumes:
       - mongo-data:/data/db
 

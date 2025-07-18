@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-interface
+spec:
+  selector:
+    app: web-interface
+  type: NodePort
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 32000

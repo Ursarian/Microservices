@@ -10,7 +10,7 @@ const app = express();
 
 // Enable CORS
 app.use(cors({
-  origin: 'http://localhost:3001'
+  origin: 'http://localhost:3000'
 }));
 
 // Middleware to parse JSON requests
@@ -27,5 +27,5 @@ mongoose.connect(process.env.MONGO_URI, {
 // Routes
 app.use('/users', userRoutes);
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 2900;
 app.listen(PORT, () => console.log(`User service running on port ${PORT}`));

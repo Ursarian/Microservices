@@ -1,8 +1,11 @@
-version: '3.8'
 services:
   product-interface:
     image: product-interface:latest
     build: .
     ports:
       - "3303:80"
+    environment:
+      - USER_INTERFACE=http://user-interface:3301
+      - PRODUCT_INTERFACE=http://product-interface:3303
+      - PRODUCT_SERVICE=http://product-service:3302/products
     restart: always

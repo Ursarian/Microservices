@@ -7,7 +7,7 @@ function Register() {
 
     const handleRegister = async () => {
         try {
-            const res = await registerUser({ email, password });
+            await registerUser({ email, password });
         } catch (err) {
             alert('Error: ' + err);
         }

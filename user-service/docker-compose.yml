@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   user-service:
     image: user-service:latest
@@ -7,15 +6,15 @@ services:
       - "3300:3000"
     environment:
       - MONGO_URI=mongodb://mongo:27017/usersdb
-      - JWT_SECRET=mySecretKey
+      - JWT_SECRET=ThomasIsGreat
     depends_on:
       - mongo
     restart: always
 
   mongo:
     image: mongo
-    ports:
-      - "27017:27017"
+    # ports:
+    #   - "27017:27017"
     volumes:
       - mongo-data:/data/db
 
