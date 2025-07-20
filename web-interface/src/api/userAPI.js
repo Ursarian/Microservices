@@ -1,12 +1,53 @@
 import axios from 'axios';
 
-const API = axios.create({
-    baseURL: process.env.REACT_APP_USER_SERVICE, // change port if needed
-});
+const USER_SERVICE_URI = process.env.REACT_APP_USER_SERVICE || '/users';
 
-export const registerUser = (data) => API.post('/register', data);
-export const loginUser = (data) => API.post('/login', data);
-export const getProfile = (token) =>
-    API.get('/profile', {
-        headers: { Authorization: `Bearer ${token}`, },
-    });
+// GET profile
+export async function getProfile(token) {
+    try {
+        const res = await axios.get(`${USER_SERVICE_URI}/profile`, {
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        return res.data;
+    } catch (err) {
+        console.error('Fetch profile failed:', err);
+        return null;
+    }
+}
+
+// POST register
+export async function registerUser(data) {
+    try {
+        const res = await axios.post(`${USER_SERVICE_URI}/register`,
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        return res.data;
+    } catch (err) {
+        console.error('Register failed:', err);
+        return null;
+    }
+}
+
+// POST login
+export async function loginUser(data) {
+    try {
+        const res = await axios.post(`${USER_SERVICE_URI}/login`,
+            data,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+        return res.data;
+    } catch (err) {
+        console.error('Login failed:', err);
+        return null;
+    }
+}

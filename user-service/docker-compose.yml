@@ -5,16 +5,16 @@ services:
     ports:
       - "3300:3000"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/usersdb
+      - MONGO_URI=mongodb://user-service-db:27017/usersdb
       - JWT_SECRET=ThomasIsGreat
     depends_on:
-      - mongo
+      - user-service-db
     restart: always
 
-  mongo:
+  user-service-db:
     image: mongo
-    # ports:
-    #   - "27017:27017"
+    ports:
+      - "27017:27017"
     volumes:
       - mongo-data:/data/db
 

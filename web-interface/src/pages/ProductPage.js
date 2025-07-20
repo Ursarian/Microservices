@@ -25,7 +25,6 @@ function ProductPage() {
     return (
         <div style={{ padding: '2rem' }}>
             <h1>Product Catalog</h1>
-            <h2>Path to product: {process.env.REACT_APP_PRODUCT_SERVICE}</h2>
             <ProductForm onAdd={handleAdd} />
             <ProductList products={products} />
         </div>

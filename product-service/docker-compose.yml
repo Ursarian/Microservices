@@ -5,15 +5,15 @@ services:
     ports:
       - "3301:3001"
     environment:
-      - MONGO_URI=mongodb://mongo:27017/productdb
+      - MONGO_URI=mongodb://product-service-db:27018/productdb
     depends_on:
-      - mongo
+      - product-service-db
     restart: always
 
-  mongo:
+  product-service-db:
     image: mongo
-    # ports:
-    #   - "27018:27017"
+    ports:
+      - "27018:27017"
     volumes:
       - mongo-data:/data/db
 

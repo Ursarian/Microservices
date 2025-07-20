@@ -12,6 +12,8 @@ function App() {
     <Router>
       <Navbar />
       <Header />
+      <h2>Path to products: {process.env.REACT_APP_PRODUCT_SERVICE}</h2>
+      <h2>Path to user: {process.env.REACT_APP_USER_SERVICE}</h2>
       <ProductPage />
       <Routes>
         <Route path="/login" element={<Login />} />

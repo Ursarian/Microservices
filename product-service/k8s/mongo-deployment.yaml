@@ -1,19 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mongo
+  name: product-service-db
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: mongo
+      app: product-service-db
   template:
     metadata:
       labels:
-        app: mongo
+        app: product-service-db
     spec:
       containers:
-        - name: mongo
+        - name: product-service-db
           image: mongo
           ports:
             - containerPort: 27017
+          volumeMounts:
+            - name: mongo-storage
+              mountPath: /data/db      # Mongo’s data directory
+      volumes:
+        - name: mongo-storage
+          persistentVolumeClaim:
+            claimName: product-service-db-pvc

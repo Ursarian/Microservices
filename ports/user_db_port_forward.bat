@@ -1,0 +1,17 @@
+@echo off
+echo Starting port-forward for MongoDB service...
+
+REM Change "mongo" if your service has a different name
+kubectl port-forward svc/user-service-db 27017:27017
+
+rem -- Check if the command was failed
+if errorlevel 1 (
+    echo.
+    echo Mongo port forward failed!
+    pause
+    exit /b 1
+)
+
+rem -- Show success message
+echo Mongo port forward succeeded.
+pause

@@ -8,17 +8,19 @@ function Login() {
 
     const handleLogin = async () => {
         try {
-            const res = await loginUser({ email, password });
-            if (res && res.data) {
-                const token = res.data.token;
-                // Store token for future use (e.g., protected routes)
-                localStorage.setItem('authToken', token);
+            const data = await loginUser({ email, password });
+            if (data && data.token) {
+                localStorage.setItem('authToken', data.token);
                 alert("Login successful!");
+            } else if (data && data.message) {
+                // this handles 400 responses turned into { message: "Invalid…" }
+                alert(data.message);
             } else {
                 alert("Unexpected response from server");
             }
         } catch (err) {
-            alert('Login failed: ' + err.response.data.message);
+            // this only fires for network errors or if you remove the try/catch inside loginUser
+            alert('Login failed: ' + (err.response?.data?.message || err.message));
         }
     };
 
