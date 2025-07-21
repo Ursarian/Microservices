@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: web-interface
+      app.kubernetes.io/name: web-interface
   template:
     metadata:
       labels:
-        app: web-interface
+        app.kubernetes.io/name: web-interface
     spec:
       # nodeSelector: 
       #   zone: docker-desktop
@@ -26,5 +26,7 @@ spec:
             - name: REACT_APP_PRODUCT_SERVICE
               value: "/products"
           envFrom:
+            - configMapRef:
+                name: web-interface-config
             - secretRef:
-                name: web-config-secret
+                name: web-interface-secret

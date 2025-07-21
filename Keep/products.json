@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Mechanical Keyboard",
+    "description": "RGB backlit, blue switches",
+    "price": 99.99
+  },
+  {
+    "name": "Wireless Mouse",
+    "description": "Ergonomic, 1600 DPI, USB receiver",
+    "price": 24.95
+  },
+  {
+    "name": "24\" IPS Monitor",
+    "description": "1920×1080, 75Hz, thin bezel",
+    "price": 129.50
+  },
+  {
+    "name": "USB-C Laptop Stand",
+    "description": "Adjustable, aluminum alloy",
+    "price": 39.00
+  },
+  {
+    "name": "Noise-Cancelling Headset",
+    "description": "Over-ear, Bluetooth, up to 30h",
+    "price": 149.99
+  }
+]

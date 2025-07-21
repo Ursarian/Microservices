@@ -3,7 +3,7 @@ services:
     image: user-service:latest
     build: .
     ports:
-      - "3300:3000"
+      - "3100:3000"
     environment:
       - MONGO_URI=mongodb://user-service-db:27017/usersdb
       - JWT_SECRET=ThomasIsGreat

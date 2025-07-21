@@ -3,9 +3,10 @@ kind: Service
 metadata:
   name: user-service-db
 spec:
+  type: NodePort
   selector:
-    app: user-service-db
+    app.kubernetes.io/name: user-service-db
   ports:
     - port: 27017
       targetPort: 27017
-  type: ClusterIP
+      nodePort: 32017

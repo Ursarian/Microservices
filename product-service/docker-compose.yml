@@ -3,7 +3,7 @@ services:
     image: product-service:latest
     build: .
     ports:
-      - "3301:3001"
+      - "3101:3001"
     environment:
       - MONGO_URI=mongodb://product-service-db:27018/productdb
     depends_on:

@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: product-service # This service will be called user-service, and other pods can access it using the DNS name http://user-service
+  name: product-service
 spec:
-  type: NodePort # Kubernetes will expose this service outside the cluster
+  type: ClusterIP
   selector:
-    app: product-service
+    app.kubernetes.io/name: product-service
   ports:
     - port: 3001
       targetPort: 3001
-      nodePort: 31001
+      # nodePort: 30001

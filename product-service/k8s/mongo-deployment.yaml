@@ -6,11 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: product-service-db
+      app.kubernetes.io/name: product-service-db
   template:
     metadata:
       labels:
-        app: product-service-db
+        app.kubernetes.io/name: product-service-db
     spec:
       containers:
         - name: product-service-db

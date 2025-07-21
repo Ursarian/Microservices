@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: web-interface
 spec:
+  type: ClusterIP
   selector:
-    app: web-interface
-  type: NodePort
+    app.kubernetes.io/name: web-interface
   ports:
     - port: 80
       targetPort: 80
-      nodePort: 32000
+      # nodePort: 32000
