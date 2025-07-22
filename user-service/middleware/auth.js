@@ -5,7 +5,7 @@ function auth(req, res, next) {
   const authHeader = req.header('Authorization');
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return res.status(401).json({ message: 'No token. Access denied.' });
+    return res.status(401).json({ message: `No token. Access denied. ${authHeader}` });
   }
 
   const token = authHeader.replace('Bearer ', '');

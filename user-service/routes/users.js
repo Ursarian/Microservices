@@ -50,6 +50,13 @@ router.post('/login', async (req, res) => {
 
 // Protected route
 router.get('/profile', auth, (req, res) => {
+  // res.set({
+  //   'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
+  //   Pragma: 'no-cache',
+  //   Expires: '0',
+  //   'Surrogate-Control': 'no-store'
+  // });
+
   res.json({
     message: `Welcome back, user ${req.user.email}`,
     email: req.user.email

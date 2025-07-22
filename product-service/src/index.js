@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.use('/products', productRoutes);
+app.use('/api/products', productRoutes);
 
 const PORT = process.env.PORT || 2901;
 app.listen(PORT, () => {

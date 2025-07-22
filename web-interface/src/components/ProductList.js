@@ -1,7 +1,7 @@
 import React from 'react';
 
 function ProductList({ products }) {
-    if (!Array.isArray(products)) return <div>Invalid data {process.env.REACT_APP_PRODUCT_SERVICE}<b /> {products}</div>;
+    if (!Array.isArray(products)) return <div>Invalid data</div>;
     if (products.length === 0) return <div>No products found</div>;
 
     return (

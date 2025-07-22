@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { registerUser } from './api/userAPI';
+import { registerUser } from '../api/userAPI';
 
 function Register() {
     const [email, setEmail] = useState('');
@@ -14,7 +14,7 @@ function Register() {
     };
 
     return (
-        <div>
+        <div style={{ padding: '2rem' }}>
             <h2>Register</h2>
             <input type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />

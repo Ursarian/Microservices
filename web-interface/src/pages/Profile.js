@@ -7,17 +7,22 @@ function Profile() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const token = localStorage.getItem('authToken');
+        const token = localStorage.getItem("authToken");
         getProfile(token)
-            .then(res => setEmail(res.data.email))
-            .catch(err => {
-                alert('Unauthorized or token expired')
-                navigate('/login')
+            .then(data => {
+                console.log("Profile data", data);
+                setEmail(data.email);
             })
+            .catch(err => {
+                console.error("Profile fetch threw", err);
+                alert("Unauthorized or token expired");
+                navigate("/login");
+            });
     }, []);
 
+
     return (
-        <div>
+        <div style={{ padding: '2rem' }} >
             <h2>Welcome to your profile</h2>
             <p>Email: {email}</p>
         </div>

@@ -30,5 +30,6 @@ kind: ConfigMap
 metadata:
   name: web-interface-config
 data:
-  REACT_APP_USER_SERVICE: "/users"
-  REACT_APP_PRODUCT_SERVICE: "/products"
+  REACT_APP_API_BASE_URL: "/api"
+  REACT_APP_USER_PATH: "/users"
+  REACT_APP_PRODUCT_PATH: "/products"
