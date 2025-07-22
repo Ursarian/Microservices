@@ -4,7 +4,7 @@ const app = require('./app');
 
 connectToDatabase()
     .then(() => {
-        const PORT = process.env.PORT || 3001;
+        const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => console.log(`Product service running on port ${PORT}`));
     })
     .catch((err) => {

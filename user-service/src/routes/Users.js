@@ -57,7 +57,7 @@ router.get('/profile', auth, (req, res) => {
   //   'Surrogate-Control': 'no-store'
   // });
 
-  res.json({
+  res.status(200).json({
     message: `Welcome back, user ${req.user.email}`,
     email: req.user.email
   });
