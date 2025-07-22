@@ -25,9 +25,11 @@ jobs:
     #   MONGO_URI: mongodb://localhost:27017/user-test-db
 
     steps:
+    # Downloads this repository code into the GitHub Actions runner
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Sets up Node.js environment
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
@@ -42,6 +44,6 @@ jobs:
       working-directory: user-service
 
     # Optional: build Docker image
-    # - name: Build Docker image
-    #   run: docker build -t user-service .
-    #   working-directory: user-service
+    - name: Build Docker image
+      run: docker build -t user-service .
+      working-directory: user-service
