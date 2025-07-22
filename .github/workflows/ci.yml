@@ -3,8 +3,13 @@ name: CI for User Service
 on:
   push:
     branches: [main, test]
+    paths:
+      - 'user-service/**'
+      - '.github/workflows/**'
   pull_request:
     branches: [main]
+    paths:
+      - 'user-service/**'
 
 jobs:
   build-and-test:
@@ -30,10 +35,13 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: user-service
 
     - name: Run tests
       run: npm test
+      working-directory: user-service
 
     # Optional: build Docker image
     # - name: Build Docker image
     #   run: docker build -t user-service .
+    #   working-directory: user-service
