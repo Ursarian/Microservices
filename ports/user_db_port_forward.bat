@@ -1,7 +1,7 @@
 @echo off
 echo Starting port-forward for MongoDB service...
 
-REM Change "mongo" if your service has a different name
+rem -- Port-forward for user service MongoDB
 kubectl port-forward svc/user-service-db 27017:27017
 
 rem -- Check if the command was failed
