@@ -15,7 +15,7 @@ describe('auth middleware', () => {
 
         expect(res.status).toHaveBeenCalledWith(401);
         expect(res.json).toHaveBeenCalledWith({
-            message: 'No token. Access denied. null'
+            message: 'No token. Access denied.'
         });
     });
 });
