@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { loginUser } from '../api/userAPI';
 
 function Login() {
@@ -20,6 +20,11 @@ function Login() {
             alert(msg);
         }
     };
+
+    useEffect(() => {
+        const savedToken = localStorage.getItem('authToken');
+        if (savedToken) setToken(savedToken);
+    }, []);
 
     return (
         <div style={{ padding: '2rem' }}>

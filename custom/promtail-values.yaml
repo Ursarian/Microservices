@@ -1,0 +1,18 @@
+promtail:
+  config:
+    snippets:
+      pipelineStages:
+        - docker: {}
+        - json:
+            expressions:
+              level: level
+              service: service
+              message: message
+              timestamp: timestamp
+        - timestamp:
+            source: timestamp
+            format: RFC3339
+        - labels:
+            level: level
+            service: service
+  enabled: true

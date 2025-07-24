@@ -1,0 +1,49 @@
+name: CI for User Service
+
+on:
+  push:
+    branches: [main, test]
+    paths:
+      - 'user-service/**'
+      - '.github/workflows/user-service.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'user-service/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # services:
+    #   mongo:
+    #     image: mongo
+    #     ports:
+    #       - 27017:27017
+
+    # env:
+    #   MONGO_URI: mongodb://localhost:27017/user-test-db
+
+    steps:
+    # Downloads this repository code into the GitHub Actions runner
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Sets up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: user-service
+
+    - name: Run tests
+      run: npm test
+      working-directory: user-service
+
+    # Optional: build Docker image
+    - name: Build Docker image
+      run: docker build -t user-service .
+      working-directory: user-service

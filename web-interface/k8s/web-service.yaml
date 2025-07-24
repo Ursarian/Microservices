@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: web-interface
+  namespace: my-services
 spec:
   type: ClusterIP
   selector:

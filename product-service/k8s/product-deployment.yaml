@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: product-service
+  namespace: my-services
 spec:
   replicas: 1
   selector:
@@ -21,5 +22,7 @@ spec:
           envFrom:
             - configMapRef:
                 name: product-service-config
+            - configMapRef:
+                name: error-codes
             - secretRef:
                 name: product-service-secret

@@ -5,7 +5,7 @@ services:
     ports:
       - "3100:3000"
     environment:
-      - MONGO_URI=mongodb://user-service-db:27017/usersdb
+      - MONGO_URI=mongodb://user-service-db:27017/userdb
       - JWT_SECRET=ThomasIsGreat
     depends_on:
       - user-service-db

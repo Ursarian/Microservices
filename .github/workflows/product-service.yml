@@ -1,0 +1,49 @@
+name: CI for Product Service
+
+on:
+  push:
+    branches: [main, test]
+    paths:
+      - 'product-service/**'
+      - '.github/workflows/product-service.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'product-service/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    env:
+      MONGO_URI: mongodb://localhost:27017/product-test-db
+
+    steps:
+    # Downloads this repository code into the GitHub Actions runner
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # Sets up Node.js environment
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: product-service
+
+    - name: Run tests
+      run: npm test
+      working-directory: product-service
+
+    # Optional: build Docker image
+    - name: Build Docker image
+      run: docker build -t product-service:test .
+      working-directory: product-service
