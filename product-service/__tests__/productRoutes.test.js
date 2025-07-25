@@ -20,8 +20,8 @@ describe('Product API', () => {
         await Product.create({ name: 'Test Product', price: 9.99 });
     });
 
-    it('GET /api/products/all should return products', async () => {
-        const res = await request(app).get('/api/products/all');
+    it('GET /api/v2/products/all should return products', async () => {
+        const res = await request(app).get('/api/v2/products/all');
         expect(res.statusCode).toBe(200);
         expect(res.body.length).toBeGreaterThan(0);
         expect(res.body[0].name).toBe('Test Product');
