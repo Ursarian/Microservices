@@ -12,7 +12,14 @@ spec:
     - http:
         paths:
         # Paths for user service
-        - path: /api/users
+        - path: /api/v1/users
+          pathType: Prefix
+          backend:
+            service:
+              name: user-service
+              port:
+                number: 3000
+        - path: /api/v2/users
           pathType: Prefix
           backend:
             service:
@@ -20,7 +27,14 @@ spec:
               port:
                 number: 3000
         # Path for product service
-        - path: /api/products
+        - path: /api/v1/products
+          pathType: Prefix
+          backend:
+            service:
+              name: product-service
+              port:
+                number: 3001
+        - path: /api/v2/products
           pathType: Prefix
           backend:
             service:

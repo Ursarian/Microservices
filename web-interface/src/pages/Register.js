@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { registerUser } from '../api/userAPI';
+import AlertBox from '../components/AlertBox';
 
 function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [alert, setAlert] = useState({ type: '', message: '' });
 
     const handleRegister = async () => {
         try {
             await registerUser({ email, password });
+            setAlert({ type: 'success', message: 'Registration successful' });
         } catch (err) {
-            alert('Error: ' + err);
+            const msg = err.response?.data?.message || err.message || 'Unknown error';
+            setAlert({ type: 'error', message: msg });
         }
     };
 
@@ -19,6 +23,7 @@ function Register() {
             <input type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
             <button onClick={handleRegister}>Submit</button>
+            <AlertBox type={alert.type} message={alert.message} onClose={() => setAlert({})} />
         </div>
     );
 }

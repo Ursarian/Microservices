@@ -1,12 +1,15 @@
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
-const USERS = process.env.REACT_APP_USER_PATH || '/users';
+const sanitize = str => str.replace(/^\/+|\/+$/g, '');
+const API_BASE = sanitize(process.env.REACT_APP_API_BASE_URL || '/api');
+const API_VERSION = sanitize(process.env.REACT_APP_USER_VERSION || '/v1');
+const USER_PATH = sanitize(process.env.REACT_APP_USER_PATH || '/users');
+const USER_SERVICE_URI = `/${API_BASE}/${API_VERSION}/${USER_PATH}`;
 
 // GET profile
 export async function getProfile(token) {
     try {
-        const res = await axios.get(`${API_BASE}${USERS}/profile`, {
+        const res = await axios.get(`${USER_SERVICE_URI}/profile`, {
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -22,7 +25,7 @@ export async function getProfile(token) {
 // POST register
 export async function registerUser(data) {
     try {
-        const res = await axios.post(`${API_BASE}${USERS}/register`,
+        const res = await axios.post(`${USER_SERVICE_URI}/register`,
             data,
             {
                 headers: {
@@ -39,7 +42,7 @@ export async function registerUser(data) {
 // POST login
 export async function loginUser(data) {
     try {
-        const res = await axios.post(`${API_BASE}${USERS}/login`,
+        const res = await axios.post(`${USER_SERVICE_URI}/login`,
             data,
             {
                 headers: {

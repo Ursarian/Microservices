@@ -1,8 +1,10 @@
 import axios from 'axios';
 
-const API_BASE = process.env.REACT_APP_API_BASE_URL || '/api';
-const PRODUCTS = process.env.REACT_APP_PRODUCT_PATH || '/products';
-const PRODUCT_SERVICE_URI = `${API_BASE}${PRODUCTS}`;
+const sanitize = str => str.replace(/^\/+|\/+$/g, '');
+const API_BASE = sanitize(process.env.REACT_APP_API_BASE_URL || '/api');
+const API_VERSION = sanitize(process.env.REACT_APP_PRODUCT_VERSION || '/v1');
+const PRODUCT_PATH = sanitize(process.env.REACT_APP_PRODUCT_PATH || '/products');
+const PRODUCT_SERVICE_URI = `/${API_BASE}/${API_VERSION}/${PRODUCT_PATH}`;
 
 export async function fetchProducts() {
     try {

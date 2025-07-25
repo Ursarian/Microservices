@@ -1,30 +1,32 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { loginUser } from '../api/userAPI';
+import AlertBox from '../components/AlertBox';
+import { useContext } from 'react';
+import { AuthContext } from '../context/AuthContext';
 
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [token, setToken] = useState('');
+    const [alert, setAlert] = useState({ type: '', message: '' });
+    const { login } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         try {
             const data = await loginUser({ email, password });
-            localStorage.setItem('authToken', data.token);
-            setToken(data.token);
-            alert(data.message || 'Login successful!');
+            login(data.token);
+            setAlert({ type: 'success', message: data.message || 'Login successful!' });
+            setTimeout(() => {
+                navigate('/profile');
+            }, 1000);
         } catch (err) {
-            // axios error → err.response.data.message should exist
             const msg = err.response?.data?.message
                 || err.message
-                || "Unexpected response from server";
-            alert(msg);
+                || "Unexpected response";
+            setAlert({ type: 'error', message: msg });
         }
     };
-
-    useEffect(() => {
-        const savedToken = localStorage.getItem('authToken');
-        if (savedToken) setToken(savedToken);
-    }, []);
 
     return (
         <div style={{ padding: '2rem' }}>
@@ -32,8 +34,7 @@ function Login() {
             <input type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
             <button onClick={handleLogin}>Login</button>
-
-            <p>Token: {token}</p>
+            <AlertBox type={alert.type} message={alert.message} onClose={() => setAlert({})} />
         </div>
     );
 }

@@ -1,6 +1,6 @@
 const express = require('express');
-const Product = require('../models/product');
-const logger = require('../utils/logger');
+const Product = require('../../models/product');
+const logger = require('../../utils/logger');
 
 const router = express.Router();
 

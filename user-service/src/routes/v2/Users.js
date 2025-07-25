@@ -1,9 +1,9 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const User = require('../models/user');
-const auth = require('../middleware/auth');
-const logger = require('../utils/logger');
+const User = require('../../models/user');
+const auth = require('../../middleware/auth');
+const logger = require('../../utils/logger');
 
 const router = express.Router();
 
@@ -11,6 +11,12 @@ const router = express.Router();
 router.post('/register', async (req, res) => {
     try {
         const { email, password } = req.body;
+
+        // Simulate an error for testing purposes
+        if (email === 'error') {
+            logger.error('Registration failed', { email });
+            throw new Error("Intentional crash!");
+        }
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -38,6 +44,12 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Simulate an error for testing purposes
+        if (email === 'error') {
+            logger.error('Login failed', { email });
+            throw new Error("Intentional crash!");
+        }
+
         // Find user
         const user = await User.findOne({ email });
         if (!user) {
@@ -51,8 +63,6 @@ router.post('/login', async (req, res) => {
             logger.error('Login failed: incorrect password', { email });
             return res.status(400).json({ message: 'Invalid email or password' });
         }
-
-        //throw new Error("Intentional crash!");
 
         // Generate JWT token
         const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
