@@ -1,7 +1,9 @@
 const auth = require('../src/middleware/auth');
 
 describe('auth middleware', () => {
-    it('should return 401 if no token is provided', () => {
+    it('should return 400 if no token is provided', () => {
+        process.env.E400_CLIENT_BAD_TOKEN = 'Authentication token is missing or malformed';
+
         const req = {
             header: jest.fn().mockReturnValue(null)
         };
@@ -13,9 +15,10 @@ describe('auth middleware', () => {
 
         auth(req, res, next);
 
-        expect(res.status).toHaveBeenCalledWith(401);
+        expect(res.status).toHaveBeenCalledWith(400);
         expect(res.json).toHaveBeenCalledWith({
-            message: 'No token. Access denied.'
+            code: 'E400_BAD_TOKEN',
+            message: 'Authentication token is missing or malformed'
         });
     });
 });

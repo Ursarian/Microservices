@@ -8,6 +8,6 @@ describe('User API', () => {
             .map(r => r.route.path));
 
         const res = await request(app).get('/api/v2/users/profile');
-        expect(res.statusCode).toBe(401);
+        expect(res.statusCode).toBe(400);
     });
 });
