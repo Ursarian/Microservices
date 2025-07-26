@@ -2,7 +2,7 @@
 echo Starting port-forward for MongoDB service...
 
 rem -- Port-forward for product service MongoDB
-kubectl port-forward svc/product-service-db 32018:27017
+kubectl port-forward svc/product-service-db -n my-services 32018:27017
 
 rem -- Check if the command was failed
 if errorlevel 1 (

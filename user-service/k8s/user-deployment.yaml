@@ -13,16 +13,24 @@ spec:
       labels:
         app.kubernetes.io/name: user-service
     spec:
+      serviceAccountName: user-service-sa
       containers:
         - name: user-service
           image: user-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3000
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "500m"
           envFrom:
             - configMapRef:
                 name: user-service-config
             - configMapRef:
-                name: error-codes
+                name: system-error-codes
+            - configMapRef:
+                name: client-error-codes
             - secretRef:
                 name: user-service-secret

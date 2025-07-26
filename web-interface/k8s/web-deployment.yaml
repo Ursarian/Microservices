@@ -30,6 +30,6 @@ spec:
             - configMapRef:
                 name: web-interface-config
             - configMapRef:
-                name: error-codes
+                name: client-error-codes
             - secretRef:
                 name: web-interface-secret

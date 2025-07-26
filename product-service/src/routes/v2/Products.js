@@ -1,4 +1,5 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const Product = require('../../models/product');
 const logger = require('../../utils/logger');
 
@@ -11,8 +12,11 @@ router.get('/all', async (req, res) => {
         logger.info('Fetched all products', { count: products.length });
         res.status(200).json(products);
     } catch (err) {
-        logger.error('Failed to fetch all products', { error: err.message });
-        res.status(500).json({ error: 'Server error while fetching products' });
+        logger.error(process.env.E500_SERVER_ERROR, { error: err.message });
+        res.status(500).json({
+            code: 'E500_SERVER_ERROR',
+            message: process.env.E500_CLIENT_SERVER_ERROR
+        });
     }
 });
 
@@ -21,14 +25,20 @@ router.get('/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
-            logger.warn('Product not found', { productId: req.params.id });
-            return res.status(404).json({ error: 'Product not found' });
+            logger.error(process.env.E404_PRODUCT_NOT_FOUND, { productId: req.params.id });
+            return res.status(404).json({
+                code: 'E404_PRODUCT_NOT_FOUND',
+                message: process.env.E404_CLIENT_PRODUCT_NOT_FOUND
+            });
         }
         logger.info('Fetched product by ID', { productId: req.params.id });
         res.status(200).json(product);
     } catch (err) {
-        logger.error('Failed to fetch product by ID', { productId: req.params.id, error: err.message });
-        res.status(400).json({ error: 'Invalid product ID' });
+        logger.error(process.env.E400_INVALID_PRODUCT_ID, { productId: req.params.id, error: err.message, stack: err.stack });
+        res.status(400).json({
+            code: 'E400_INVALID_PRODUCT_ID',
+            message: process.env.E400_CLIENT_INVALID_PRODUCT_ID
+        });
     }
 });
 
@@ -40,8 +50,11 @@ router.post('/', async (req, res) => {
         logger.info('Product created', { productId: saved._id });
         res.status(201).json(saved);
     } catch (err) {
-        logger.error('Failed to create product', { error: err.message });
-        res.status(400).json({ error: 'Bad Request: ' + err.message });
+        logger.error(process.env.E400_CREATE_PRODUCT_FAIL, { error: err.message, stack: err.stack });
+        res.status(400).json({
+            code: 'E400_CREATE_PRODUCT_FAIL',
+            message: process.env.E400_CLIENT_CREATE_PRODUCT_FAIL
+        });
     }
 });
 
@@ -53,14 +66,20 @@ router.put('/:id', async (req, res) => {
             runValidators: true
         });
         if (!updated) {
-            logger.warn('Product to update not found', { productId: req.params.id });
-            return res.status(404).json({ error: 'Product not found' });
+            logger.error(process.env.E404_PRODUCT_NOT_FOUND, { productId: req.params.id });
+            return res.status(404).json({
+                code: 'E404_PRODUCT_NOT_FOUND',
+                message: process.env.E404_CLIENT_PRODUCT_NOT_FOUND
+            });
         }
         logger.info('Product updated', { productId: req.params.id });
         res.status(200).json(updated);
     } catch (err) {
-        logger.error('Failed to update product', { productId: req.params.id, error: err.message });
-        res.status(400).json({ error: 'Bad Request: ' + err.message });
+        logger.error(process.env.E400_UPDATE_PRODUCT_FAIL, { productId: req.params.id, error: err.message, stack: err.stack });
+        res.status(400).json({
+            code: 'E400_UPDATE_PRODUCT_FAIL',
+            message: process.env.E400_CLIENT_UPDATE_PRODUCT_FAIL
+        });
     }
 });
 
@@ -69,14 +88,20 @@ router.delete('/:id', async (req, res) => {
     try {
         const deleted = await Product.findByIdAndDelete(req.params.id);
         if (!deleted) {
-            logger.warn('Product to delete not found', { productId: req.params.id });
-            return res.status(404).json({ error: 'Product not found' });
+            logger.error(process.env.E404_PRODUCT_NOT_FOUND, { productId: req.params.id });
+            return res.status(404).json({
+                code: 'E404_PRODUCT_NOT_FOUND',
+                message: process.env.E404_CLIENT_PRODUCT_NOT_FOUND
+            });
         }
         logger.info('Product deleted', { productId: req.params.id });
         res.status(200).json({ message: 'Product deleted' });
     } catch (err) {
-        logger.error('Failed to delete product', { productId: req.params.id, error: err.message });
-        res.status(400).json({ error: 'Invalid product ID' });
+        logger.error(process.env.E400_DELETE_PRODUCT_FAIL, { productId: req.params.id, error: err.message, stack: err.stack });
+        res.status(400).json({
+            code: 'E400_DELETE_PRODUCT_FAIL',
+            message: process.env.E400_CLIENT_DELETE_PRODUCT_FAIL
+        });
     }
 });
 

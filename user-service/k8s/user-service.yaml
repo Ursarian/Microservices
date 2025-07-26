@@ -4,10 +4,10 @@ metadata:
   name: user-service
   namespace: my-services
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: user-service
   ports:
     - port: 3000
       targetPort: 3000
-      nodePort: 30000
+      # nodePort: 30000

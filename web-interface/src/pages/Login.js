@@ -4,6 +4,7 @@ import { loginUser } from '../api/userAPI';
 import AlertBox from '../components/AlertBox';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import styles from './Auth.module.css';
 
 function Login() {
     const [email, setEmail] = useState('');
@@ -29,7 +30,7 @@ function Login() {
     };
 
     return (
-        <div style={{ padding: '2rem' }}>
+        <div className={styles.container}>
             <h2>Login</h2>
             <input type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />

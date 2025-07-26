@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { registerUser } from '../api/userAPI';
 import AlertBox from '../components/AlertBox';
+import styles from './Auth.module.css';
 
 function Register() {
     const [email, setEmail] = useState('');
@@ -18,7 +19,7 @@ function Register() {
     };
 
     return (
-        <div style={{ padding: '2rem' }}>
+        <div className={styles.container}>
             <h2>Register</h2>
             <input type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />

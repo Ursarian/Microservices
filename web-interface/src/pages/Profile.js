@@ -4,6 +4,7 @@ import { getProfile } from '../api/userAPI';
 import AlertBox from '../components/AlertBox';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
+import styles from './Auth.module.css';
 
 function Profile() {
     const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ function Profile() {
 
 
     return (
-        <div style={{ padding: '2rem' }} >
+        <div className={styles.container}>
             <h2>Welcome to your profile</h2>
             <p>Email: {email}</p>
             <p style={{ wordBreak: 'break-all' }}>
