@@ -22,13 +22,28 @@ export async function fetchProducts() {
     }
 }
 
-export async function createProduct(product) {
+export async function fetchProductsByUser(userId) {
+    try {
+        const res = await axios.get(`${PRODUCT_SERVICE_URI}/by-owner/${userId}`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return res.data;
+    } catch (err) {
+        console.error('fetchProductsByUser error:', err);
+        throw err;
+    }
+}
+
+export async function createProduct(product, token) {
     try {
         const res = await axios.post(PRODUCT_SERVICE_URI,
             product,
             {
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             });
         return res.data;
@@ -41,7 +56,7 @@ export async function createProduct(product) {
 export async function updateProduct(id, product) {
     try {
         const res = await axios.put(`${PRODUCT_SERVICE_URI}/${id}`, product, {
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
         });
         return res.data;
     } catch (err) {
@@ -53,7 +68,7 @@ export async function updateProduct(id, product) {
 export async function deleteProduct(id) {
     try {
         const res = await axios.delete(`${PRODUCT_SERVICE_URI}/${id}`, {
-            headers: { 'Content-Type': 'application/json' }
+            headers: { 'Content-Type': 'application/json' },
         });
         return res.data;
     } catch (err) {

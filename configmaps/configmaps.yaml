@@ -46,11 +46,11 @@ metadata:
   name: user-service-config
   namespace: my-services
 data:
-  SERVICE_NAME: user-service
+  SERVICE_NAME: "user-service"
   MONGO_URI: "mongodb://user-service-db:27017/userdb"
   PORT: "3000"
   ENABLE_STRUCTURED_LOGS: "true"
-  LOG_LEVEL: info
+  LOG_LEVEL: "info"
 ---
 # Product Service ConfigMap
 apiVersion: v1
@@ -59,24 +59,8 @@ metadata:
   name: product-service-config
   namespace: my-services
 data:
-  SERVICE_NAME: product-service
+  SERVICE_NAME: "product-service"
   MONGO_URI: "mongodb://product-service-db:27017/productdb"
   PORT: "3001"
   ENABLE_STRUCTURED_LOGS: "true"
-  LOG_LEVEL: info
----
-# Web Interface ConfigMap
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: web-interface-config
-  namespace: my-services
-data:
-  REACT_APP_SERVICE_NAME: web-interface
-  REACT_APP_ENABLE_STRUCTURED_LOGS: "true"
-  REACT_APP_LOG_LEVEL: info
-  REACT_APP_API_BASE_URL: "api"
-  REACT_APP_USER_PATH: "users"
-  REACT_APP_USER_VERSION: "v2"
-  REACT_APP_PRODUCT_PATH: "products"
-  REACT_APP_PRODUCT_VERSION: "v2"
+  LOG_LEVEL: "info"

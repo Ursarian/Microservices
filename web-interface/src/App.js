@@ -20,7 +20,7 @@ function App() {
             <Route path="/register" element={<Register />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/products" element={<ProductPage />} />
-            <Route path="/" element={<ProductPage />} />
+            <Route path="/" element={<Login />} />
 
             {/* Catch 404 Not Found routes */}
             <Route path="/*" element={<NotFound />} />

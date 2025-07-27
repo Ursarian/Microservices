@@ -1,4 +1,4 @@
-name: CI for Product Service
+name: Product Service Unit Tests
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - 'product-service/**'
 
 jobs:
-  build-and-test:
+  unit-test:
     runs-on: ubuntu-latest
 
     services:

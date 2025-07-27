@@ -12,10 +12,20 @@ router.post('/register', async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Simulate an error for testing purposes
+        if (email === 'error') {
+            logger.error('Registration failed', { email });
+            throw new Error("Intentional crash!");
+        }
+
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
-            return res.status(400).json({ message: 'Email already exists' });
+            logger.error(process.env.E400_USER_EXISTS, { email });
+            return res.status(400).json({
+                code: 'E400_USER_EXISTS',
+                message: process.env.E400_CLIENT_USER_EXISTS
+            });
         }
 
         // Hash password
@@ -28,8 +38,11 @@ router.post('/register', async (req, res) => {
         logger.info('User registered', { email });
         res.status(201).json({ message: 'User registered successfully' });
     } catch (err) {
-        logger.error('Registration failed', { error: err.message });
-        res.status(500).json({ message: 'Server error' });
+        logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
+        res.status(500).json({
+            code: 'E500_SERVER_ERROR',
+            message: process.env.E500_CLIENT_SERVER_ERROR
+        });
     }
 });
 
@@ -38,18 +51,30 @@ router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
+        // Simulate an error for testing purposes
+        if (email === 'error') {
+            logger.error('Login failed', { email });
+            throw new Error("Intentional crash!");
+        }
+
         // Find user
         const user = await User.findOne({ email });
         if (!user) {
-            logger.error('Login failed: user not found', { email });
-            return res.status(400).json({ message: 'Invalid email or password' });
+            logger.error(process.env.E400_USER_NOT_FOUND, { email });
+            return res.status(400).json({
+                code: 'E400_INVALID_CREDENTIALS',
+                message: process.env.E400_CLIENT_INVALID_CREDENTIALS
+            });
         }
 
         // Compare password
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            logger.error('Login failed: incorrect password', { email });
-            return res.status(400).json({ message: 'Invalid email or password' });
+            logger.error(process.env.E400_INVALID_PASSWORD, { email });
+            return res.status(400).json({
+                code: 'E400_INVALID_CREDENTIALS',
+                message: process.env.E400_CLIENT_INVALID_CREDENTIALS
+            });
         }
 
         // Generate JWT token
@@ -58,8 +83,11 @@ router.post('/login', async (req, res) => {
         logger.info('User login successful', { email });
         res.status(201).json({ message: 'Login successful!', token });
     } catch (err) {
-        logger.error('Login failed', { error: err.message });
-        res.status(500).json({ message: 'Server error' });
+        logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
+        res.status(500).json({
+            code: 'E500_SERVER_ERROR',
+            message: process.env.E500_CLIENT_SERVER_ERROR
+        });
     }
 });
 

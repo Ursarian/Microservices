@@ -1,4 +1,4 @@
-name: CI for User Service
+name: User Service Unit Tests
 
 on:
   push:
@@ -12,7 +12,7 @@ on:
       - 'user-service/**'
 
 jobs:
-  build-and-test:
+  unit-test:
     runs-on: ubuntu-latest
 
     # services:

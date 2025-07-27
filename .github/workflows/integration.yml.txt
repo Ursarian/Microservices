@@ -1,0 +1,56 @@
+name: Integration Test (user <-> product)
+
+on:
+  push:
+    branches: [main, test]
+    paths:
+      - 'user-service/**'
+      - 'product-service/**'
+      - '.github/workflows/integration.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'user-service/**'
+      - 'product-service/**'
+
+jobs:
+  integration-test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+
+    env:
+      MONGO_URI: mongodb://localhost:27017/integration-test-db
+      USER_SERVICE_URL: http://localhost:3001
+      PRODUCT_SERVICE_URL: http://localhost:3001
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies - product-service
+        working-directory: product-service
+        run: npm ci
+
+      - name: Start product-service
+        working-directory: product-service
+        run: |
+          npm start &
+          sleep 5
+
+      - name: Install dependencies - user-service
+        working-directory: user-service
+        run: npm ci
+
+      - name: Run integration tests
+        working-directory: user-service
+        run: npm test

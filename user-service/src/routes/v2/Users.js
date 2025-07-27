@@ -106,4 +106,14 @@ router.get('/profile', auth, (req, res) => {
     });
 });
 
+router.get('/all', async (req, res) => {
+    try {
+        const users = await User.find({}, '_id email');
+        res.status(200).json(users);
+    } catch (err) {
+        logger.error('Failed to fetch users', { error: err.message });
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 module.exports = router;

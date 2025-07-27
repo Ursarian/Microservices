@@ -13,23 +13,9 @@ spec:
       labels:
         app.kubernetes.io/name: web-interface
     spec:
-      # nodeSelector: 
-      #   zone: docker-desktop
       containers:
         - name: web-interface
           image: web-interface:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
-          env:
-            - name: REACT_APP_USER_SERVICE
-              value: "/users"
-            - name: REACT_APP_PRODUCT_SERVICE
-              value: "/products"
-          envFrom:
-            - configMapRef:
-                name: web-interface-config
-            - configMapRef:
-                name: client-error-codes
-            - secretRef:
-                name: web-interface-secret

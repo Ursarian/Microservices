@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
 const Product = require('../../models/product');
 const logger = require('../../utils/logger');
 
@@ -42,11 +42,36 @@ router.get('/:id', async (req, res) => {
     }
 });
 
+// GET product by owner ID
+router.get('/by-owner/:userId', async (req, res) => {
+    try {
+        const products = await Product.find({ ownerId: req.params.userId });
+        res.status(200).json(products);
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // POST create product
 router.post('/', async (req, res) => {
     try {
-        const newProduct = new Product(req.body);
+        const authHeader = req.header('Authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ message: 'Missing or malformed token' });
+        }
+
+        const token = authHeader.replace('Bearer ', '');
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (err) {
+            return res.status(401).json({ message: 'Invalid or expired token' });
+        }
+
+        // Add ownerId to request body
+        const newProduct = new Product({ ...req.body, ownerId: decoded.userId });
         const saved = await newProduct.save();
+
         logger.info('Product created', { productId: saved._id });
         res.status(201).json(saved);
     } catch (err) {

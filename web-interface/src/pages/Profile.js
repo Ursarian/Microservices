@@ -17,7 +17,6 @@ function Profile() {
 
         getProfile(token)
             .then(data => {
-                console.log("Profile data", data);
                 setEmail(data.email);
             })
             .catch(err => {

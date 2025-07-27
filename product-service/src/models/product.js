@@ -15,6 +15,11 @@ const ProductSchema = new mongoose.Schema({
         type: Number,
         required: true,
         min: 0
+    },
+    ownerId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'user'
     }
 }, {
     timestamps: true // adds createdAt and updatedAt fields

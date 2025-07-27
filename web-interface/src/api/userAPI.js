@@ -55,3 +55,18 @@ export async function loginUser(data) {
         throw err;
     }
 }
+
+// GET all users
+export async function fetchUsers() {
+    try {
+        const res = await axios.get(`${USER_SERVICE_URI}/all`, {
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        return res.data;
+    } catch (err) {
+        console.error('fetchAllUsers error:', err);
+        throw err;
+    }
+}
