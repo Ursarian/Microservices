@@ -5,9 +5,20 @@ services:
     ports:
       - "3101:3001"
     environment:
-      - MONGO_URI=mongodb://product-service-db:27018/productdb
+      SERVICE_NAME: product-service
+      MONGO_URI: mongodb://mongo:27017/products
+      PORT: 3001
+      USER_DOMAIN: http://user-service
+      USER_PORT: 3000
+      API_BASE_URL: api
+      USER_VERSION: v2
+      USER_PATH: users
+      ENABLE_STRUCTURED_LOGS: true
+      LOG_LEVEL: info
+      JWT_SECRET: thisIsADrill
     depends_on:
-      - product-service-db
+      product-service-db:
+        condition: service_healthy
     restart: always
 
   product-service-db:
@@ -16,6 +27,11 @@ services:
       - "27018:27017"
     volumes:
       - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
 volumes:
   mongo-data:
