@@ -13,7 +13,6 @@ const PRODUCT_SERVICE_URI = buildServiceUri('PRODUCT');
 
 // ROUTE - Registration
 router.post('/register', async (req, res) => {
-    console.log('📨 /register route reached');
     try {
         const { email, password } = req.body;
 
@@ -23,13 +22,8 @@ router.post('/register', async (req, res) => {
             throw new Error("Intentional crash!");
         }
 
-        console.log(`📨 /register checkpoint 1 ${email}`);
-
         // Check if user already exists
-        console.log('📌 Finding user:', email);
         const existingUser = await User.findOne({ email }).maxTimeMS(1000);
-        console.log('✅ Found user?', !!existingUser);
-
         if (existingUser) {
             logger.error(process.env.E400_USER_EXISTS, { email });
             return res.status(400).json({
@@ -38,16 +32,12 @@ router.post('/register', async (req, res) => {
             });
         }
 
-        console.log('📨 /register checkpoint 2');
-
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save user to database
         const newUser = new User({ email, password: hashedPassword });
         await newUser.save();
-
-        console.log('📨 /register checkpoint 3');
 
         logger.info('User registered', { email });
         res.status(201).json({ message: 'User registered successfully' });

@@ -1,81 +1,66 @@
 require('dotenv').config({ path: './.env.test' });
 const request = require('supertest');
-const connectToDatabase = require('../user-service/src/db');
-const mongoose = require('mongoose');
-const userApp = require('../user-service/src/app');
-const productApp = require('../product-service/src/app');
-const User = require('../user-service/src/models/user');
-const Product = require('../product-service/src/models/product');
+const user_service = 'http://localhost:3000';
+const product_service = 'http://localhost:3001';
 
+const USER_PATH = '/api/v2/users';
+const USER_REGISTRATION_PATH = `${USER_PATH}/register`;
+const USER_LOGIN_PATH = `${USER_PATH}/login`;
+const USER_DELETE_ME_PATH = `${USER_PATH}/me`;
+const PRODUCT_PATH = '/api/v2/products';
+const PRODUCT_BY_OWNER_PATH = `${PRODUCT_PATH}/by-owner`;
 const TEST_EMAIL = 'test@hle37.com';
 const TEST_PASSWORD = 'password123';
-
-// jest.setTimeout(1000);
-
-beforeAll(async () => {
-    db = await connectToDatabase();
-    console.log(db.connection.host);
-});
-
-afterAll(async () => {
-    await mongoose.connection.dropDatabase();
-    await db.connection.close();
-
-});
 
 describe('User deletion triggers product deletion', () => {
 
     it('should register a user', async () => {
-        console.log('▶️  Sending registration request...');
-
-        const res = await request(userApp)
-            .post('/api/v2/users/register')
+        const res = await request(user_service)
+            .post(USER_REGISTRATION_PATH)
             .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
-
-        console.log('Register response:', res.statusCode, res.body);
 
         expect(res.statusCode).toBe(201);
     });
 
-    // it('should log in and get a token', async () => {
-    //     const res = await request(userApp)
-    //         .post('/api/v2/users/login')
-    //         .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
+    it('should log in and get a token', async () => {
+        const res = await request(user_service)
+            .post(USER_LOGIN_PATH)
+            .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
 
-    //     console.log('Login response:', res.statusCode, res.body);
+        expect(res.statusCode).toBe(201);
 
-    //     expect(res.statusCode).toBe(201);
-    //     token = res.body.token;
-    //     const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
-    //     userId = payload.userId;
-    //     expect(token).toBeDefined();
-    // });
+        token = res.body.token;
+        const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
+        userId = payload.userId;
 
-    // it('should create a product owned by the user', async () => {
-    //     const res = await request(productApp)
-    //         .post('/api/v2/products')
-    //         .set('Authorization', `Bearer ${token}`)
-    //         .send({
-    //             name: 'Test Product',
-    //             description: 'Just a test',
-    //             price: 99.99
-    //         });
+        expect(token).toBeDefined();
+    });
 
-    //     expect(res.statusCode).toBe(201);
-    //     expect(res.body.ownerId).toBe(userId);
-    // });
+    it('should create a product owned by the user', async () => {
+        const res = await request(product_service)
+            .post(PRODUCT_PATH)
+            .set('Authorization', `Bearer ${token}`)
+            .send({
+                name: 'Test Product',
+                description: 'Just a test',
+                price: 99.99
+            });
 
-    // it('should delete the user and cascade delete their products', async () => {
-    //     const deleteRes = await request(userApp)
-    //         .delete('/api/v2/users/me')
-    //         .set('Authorization', `Bearer ${token}`);
+        expect(res.statusCode).toBe(201);
+        expect(res.body.ownerId).toBe(userId);
+    });
 
-    //     expect(deleteRes.statusCode).toBe(200);
+    it('should delete the user and cascade delete their products', async () => {
+        const deleteRes = await request(user_service)
+            .delete(USER_DELETE_ME_PATH)
+            .set('Authorization', `Bearer ${token}`);
 
-    //     const checkRes = await request(productApp)
-    //         .get(`/api/v2/products/by-owner/${userId}`);
+        expect(deleteRes.statusCode).toBe(200);
 
-    //     expect(checkRes.statusCode).toBe(200);
-    //     expect(checkRes.body).toEqual([]);
-    // });
+        const checkRes = await request(product_service)
+            .get(`${PRODUCT_BY_OWNER_PATH}/${userId}`);
+
+        expect(checkRes.statusCode).toBe(200);
+        expect(checkRes.body).toEqual([]);
+    });
 });
