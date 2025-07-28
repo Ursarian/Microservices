@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../api/userAPI';
+import { loginUser } from '../api/userApi';
 import AlertBox from '../components/AlertBox';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -34,7 +34,9 @@ function Login() {
             <h2>Login</h2>
             <input type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
-            <button onClick={handleLogin}>Login</button>
+            <button onClick={handleLogin}>
+                Login
+            </button>
             <AlertBox type={alert.type} message={alert.message} onClose={() => setAlert({})} />
         </div>
     );

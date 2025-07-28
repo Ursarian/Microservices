@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "4000:4000"
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: mongodb://mongo:27017/users
+      PORT: 4000
+      PRODUCT_DOMAIN: http://product-service
+      PRODUCT_PORT: 4001
+      API_BASE_URL: api
+      PRODUCT_VERSION: v2
+      PRODUCT_PATH: products
+      JWT_SECRET: testsecret
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "4001:4001"
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: mongodb://mongo:27017/products
+      PORT: 4001
+      USER_DOMAIN: http://user-service
+      USER_PORT: 4000
+      API_BASE_URL: api
+      USER_VERSION: v2
+      USER_PATH: users
+      JWT_SECRET: testsecret

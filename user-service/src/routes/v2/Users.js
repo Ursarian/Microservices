@@ -1,14 +1,19 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
 const User = require('../../models/user');
 const auth = require('../../middleware/auth');
+const { buildServiceUri } = require('../../utils/buildServiceUri');
 const logger = require('../../utils/logger');
 
 const router = express.Router();
 
-// Register a new user
+const PRODUCT_SERVICE_URI = buildServiceUri('PRODUCT');
+
+// ROUTE - Registration
 router.post('/register', async (req, res) => {
+    console.log('📨 /register route reached');
     try {
         const { email, password } = req.body;
 
@@ -18,8 +23,13 @@ router.post('/register', async (req, res) => {
             throw new Error("Intentional crash!");
         }
 
+        console.log(`📨 /register checkpoint 1 ${email}`);
+
         // Check if user already exists
-        const existingUser = await User.findOne({ email });
+        console.log('📌 Finding user:', email);
+        const existingUser = await User.findOne({ email }).maxTimeMS(1000);
+        console.log('✅ Found user?', !!existingUser);
+
         if (existingUser) {
             logger.error(process.env.E400_USER_EXISTS, { email });
             return res.status(400).json({
@@ -28,12 +38,16 @@ router.post('/register', async (req, res) => {
             });
         }
 
+        console.log('📨 /register checkpoint 2');
+
         // Hash password
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save user to database
         const newUser = new User({ email, password: hashedPassword });
         await newUser.save();
+
+        console.log('📨 /register checkpoint 3');
 
         logger.info('User registered', { email });
         res.status(201).json({ message: 'User registered successfully' });
@@ -46,7 +60,7 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Login user
+// ROUTE - Login
 router.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -60,7 +74,7 @@ router.post('/login', async (req, res) => {
         // Find user
         const user = await User.findOne({ email });
         if (!user) {
-            logger.error(process.env.E400_USER_NOT_FOUND, { email });
+            logger.error(process.env.E400_INVALID_EMAIL, { email });
             return res.status(400).json({
                 code: 'E400_INVALID_CREDENTIALS',
                 message: process.env.E400_CLIENT_INVALID_CREDENTIALS
@@ -91,7 +105,7 @@ router.post('/login', async (req, res) => {
     }
 });
 
-// Protected route
+// ROUTE - Profile (protected)
 router.get('/profile', auth, (req, res) => {
     // res.set({
     //   'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
@@ -106,13 +120,82 @@ router.get('/profile', auth, (req, res) => {
     });
 });
 
+// GET - Get All Users ID and Email
 router.get('/all', async (req, res) => {
     try {
         const users = await User.find({}, '_id email');
+
         res.status(200).json(users);
     } catch (err) {
         logger.error('Failed to fetch users', { error: err.message });
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// GET - Get User by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            logger.error(process.env.E404_USER_NOT_FOUND, { email });
+            return res.status(404).json({
+                code: 'E404_USER_NOT_FOUND',
+                message: process.env.E404_CLIENT_USER_NOT_FOUND
+            });
+        }
+
+        res.status(200).json({ _id: user._id, email: user.email });
+    } catch (err) {
+        if (err.name === 'CastError') {
+            logger.error(process.env.E400_INVALID_ID, { error: err.message, stack: err.stack });
+            return res.status(400).json({
+                code: 'E400_INVALID_ID',
+                message: process.env.E400_CLIENT_INVALID_ID
+            });
+        };
+
+        logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
+        res.status(500).json({
+            code: 'E500_SERVER_ERROR',
+            message: process.env.E500_CLIENT_SERVER_ERROR
+        });
+    }
+});
+
+// DELETE - Delete Me (protected)
+router.delete('/me', auth, async (req, res) => {
+    try {
+        const userId = req.user.userId;
+
+        // Delete the user
+        const deletedUser = await User.findByIdAndDelete(userId);
+
+        if (!deletedUser) {
+            logger.error(process.env.E404_USER_NOT_FOUND, { userId: userId });
+            return res.status(404).json({
+                code: 'E404_USER_NOT_FOUND',
+                message: process.env.E404_CLIENT_USER_NOT_FOUND
+            });
+        }
+
+        logger.info('User deleted account', { userId: userId });
+
+        // Request product-service to delete their products
+        try {
+            await axios.delete(`${PRODUCT_SERVICE_URI}/by-owner/${userId}`);
+            logger.info('User deleted all their products', { userId: userId });
+        } catch (err) {
+            logger.error(process.env.E400_DELETE_PRODUCTS_FAIL, { userId: userId, error: err.message, stack: err.stack });
+        }
+
+        res.status(200).json({ message: 'User deleted successfully (products attempted)' });
+    } catch (err) {
+        logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
+        res.status(500).json({
+            code: 'E500_SERVER_ERROR',
+            message: process.env.E500_CLIENT_SERVER_ERROR
+        });
     }
 });
 

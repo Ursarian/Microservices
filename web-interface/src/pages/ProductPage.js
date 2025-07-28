@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { fetchProducts, createProduct, updateProduct, deleteProduct, fetchProductsByUser } from '../api/productApi';
-import { fetchUsers } from '../api/userAPI';
+import { fetchAllProducts, createProduct, updateProduct, deleteProduct, fetchProductsByUser } from '../api/productApi';
+import { fetchAllUsers } from '../api/userApi';
 import ProductList from '../components/ProductList';
 import ProductForm from '../components/ProductForm';
 import { useContext } from 'react';
@@ -15,7 +15,7 @@ function ProductPage() {
 
     useEffect(() => {
         if (!selectedUserId || selectedUserId === '*') {
-            fetchProducts()
+            fetchAllProducts()
                 .then(setProducts)
                 .catch(console.error);
         } else {
@@ -26,7 +26,7 @@ function ProductPage() {
     }, [selectedUserId]);
 
     useEffect(() => {
-        fetchUsers()
+        fetchAllUsers()
             .then(setUsers)
             .catch(console.error);
     }, []);

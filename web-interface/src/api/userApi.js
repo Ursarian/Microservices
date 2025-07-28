@@ -1,20 +1,18 @@
 import axios from 'axios';
+const { buildServiceUri } = require('../utils/buildServiceUri');
 
-const sanitize = str => str.replace(/^\/+|\/+$/g, '');
-const API_BASE = sanitize(process.env.REACT_APP_API_BASE_URL || '/api');
-const API_VERSION = sanitize(process.env.REACT_APP_USER_VERSION || '/v1');
-const USER_PATH = sanitize(process.env.REACT_APP_USER_PATH || '/users');
-const USER_SERVICE_URI = `/${API_BASE}/${API_VERSION}/${USER_PATH}`;
+const USER_SERVICE_URI = buildServiceUri('USER');
 
-// GET profile
+// GET Profile
 export async function getProfile(token) {
     try {
-        const res = await axios.get(`${USER_SERVICE_URI}/profile`, {
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
+        const res = await axios.get(`${USER_SERVICE_URI}/profile`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
         return res.data;
     } catch (err) {
         console.error('getProfile error:', err);
@@ -22,7 +20,7 @@ export async function getProfile(token) {
     }
 }
 
-// POST register
+// POST Register
 export async function registerUser(data) {
     try {
         const res = await axios.post(`${USER_SERVICE_URI}/register`,
@@ -39,7 +37,7 @@ export async function registerUser(data) {
     }
 }
 
-// POST login
+// POST Login
 export async function loginUser(data) {
     try {
         const res = await axios.post(`${USER_SERVICE_URI}/login`,
@@ -56,17 +54,35 @@ export async function loginUser(data) {
     }
 }
 
-// GET all users
-export async function fetchUsers() {
+// GET All Users
+export async function fetchAllUsers() {
     try {
-        const res = await axios.get(`${USER_SERVICE_URI}/all`, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
+        const res = await axios.get(`${USER_SERVICE_URI}/all`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
         return res.data;
     } catch (err) {
         console.error('fetchAllUsers error:', err);
+        throw err;
+    }
+}
+
+// DELETE Me
+export async function deleteProfile(token) {
+    try {
+        const res = await axios.delete(`${USER_SERVICE_URI}/me`,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                }
+            });
+        return res.data;
+    } catch (err) {
+        console.error('deleteProfile error:', err);
         throw err;
     }
 }

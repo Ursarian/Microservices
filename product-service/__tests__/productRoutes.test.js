@@ -10,7 +10,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-    await mongoose.connection.dropDatabase(); // Optional: clean up
+    await mongoose.connection.dropDatabase();
     await mongoose.connection.close();
 });
 

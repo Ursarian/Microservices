@@ -1,4 +1,4 @@
-const SERVICE_NAME = process.env.SERVICE_NAME || 'unknown-service';
+const SERVICE_NAME = process.env.SERVICE_NAME || 'user-service';
 const LOG_LEVEL = process.env.LOG_LEVEL || 'info';
 const STRUCTURED = process.env.ENABLE_STRUCTURED_LOGS === 'true';
 

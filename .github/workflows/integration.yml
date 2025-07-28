@@ -1,0 +1,53 @@
+name: Integration Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    services:
+      mongo:
+        image: mongo:latest
+        ports: [27017:27017]
+        options: >-
+          --health-cmd "mongo --eval 'db.runCommand({ ping: 1 })'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install root dependencies
+      run: npm install
+
+    - name: Build & Start services
+      run: docker-compose up -d --build
+
+    - name: Wait for services to be ready
+      run: |
+        until curl -s http://localhost:4000/api/v1/users || false; do
+          echo "Waiting for user-service..."
+          sleep 5
+        done
+        until curl -s http://localhost:4001/api/v1/products || false; do
+          echo "Waiting for product-service..."
+          sleep 5
+        done
+
+    - name: Run integration tests
+      run: |
+        npm install
+        node __tests__/integration-delete-user-products.test.js
+      env:
+        NODE_ENV: test
