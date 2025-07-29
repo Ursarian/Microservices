@@ -13,10 +13,10 @@ router.post('/register', async (req, res) => {
         const { email, password } = req.body;
 
         // Simulate an error for testing purposes
-        if (email === 'error') {
-            logger.error('Registration failed', { email });
-            throw new Error("Intentional crash!");
-        }
+        // if (email === 'error') {
+        //     logger.error('Registration failed', { email });
+        //     throw new Error("Intentional crash!");
+        // }
 
         // Check if user already exists
         const existingUser = await User.findOne({ email });
@@ -52,10 +52,10 @@ router.post('/login', async (req, res) => {
         const { email, password } = req.body;
 
         // Simulate an error for testing purposes
-        if (email === 'error') {
-            logger.error('Login failed', { email });
-            throw new Error("Intentional crash!");
-        }
+        // if (email === 'error') {
+        //     logger.error('Login failed', { email });
+        //     throw new Error("Intentional crash!");
+        // }
 
         // Find user
         const user = await User.findOne({ email });

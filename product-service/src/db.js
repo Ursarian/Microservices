@@ -2,10 +2,16 @@ const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 
 // MongoDB Connection
-function connectToDatabase() {
-    return mongoose.connect(process.env.MONGO_URI)
-        .then(() => logger.info('Connected to MongoDB'))
-        .catch(err => logger.error('MongoDB connection error:', { error: err.message }));
+async function connectToDatabase() {
+    try {
+        await mongoose.connect(process.env.MONGO_URI);
+        await mongoose.connection.asPromise();
+        logger.info('Connected to MongoDB');
+        return mongoose;
+    } catch (err) {
+        logger.error('MongoDB connection error:', { error: err.message });
+        throw err;
+    }
 }
 
 module.exports = connectToDatabase;

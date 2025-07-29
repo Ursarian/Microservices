@@ -5,28 +5,28 @@ const user_service = 'http://localhost:3000';
 const product_service = 'http://localhost:3001';
 
 const USER_PATH = '/api/v2/users';
-const USER_REGISTRATION_PATH = `${USER_PATH}/register`;
-const USER_LOGIN_PATH = `${USER_PATH}/login`;
-const USER_DELETE_ME_PATH = `${USER_PATH}/me`;
 const PRODUCT_PATH = '/api/v2/products';
-const PRODUCT_BY_OWNER_PATH = `${PRODUCT_PATH}/by-owner`;
+const USER_REGISTER = `${USER_PATH}/register`;
+const USER_LOGIN = `${USER_PATH}/login`;
+const PRODUCT_CREATE = `${PRODUCT_PATH}`;
+const PRODUCT_BY_OWNER = `${PRODUCT_PATH}/by-owner`;
 
 const TEST_EMAIL = 'test@hle37.com';
 const TEST_PASSWORD = 'password123';
 
-describe('User deletion triggers product deletion', () => {
+describe('Create Product Integration Flow', () => {
 
     it('should register a user', async () => {
         const res = await request(user_service)
-            .post(USER_REGISTRATION_PATH)
+            .post(USER_REGISTER)
             .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
 
         expect(res.statusCode).toBe(201);
     });
 
-    it('should log in and get a token', async () => {
+    it('should log in and retrieve token', async () => {
         const res = await request(user_service)
-            .post(USER_LOGIN_PATH)
+            .post(USER_LOGIN)
             .send({ email: TEST_EMAIL, password: TEST_PASSWORD });
 
         expect(res.statusCode).toBe(201);
@@ -39,31 +39,29 @@ describe('User deletion triggers product deletion', () => {
         expect(userId).toBeDefined();
     });
 
-    it('should create a product owned by the user', async () => {
+    it('should create a product', async () => {
+        const productData = {
+            name: 'Integration Test Product',
+            description: 'This is a test product',
+            price: 45.99
+        };
+
         const res = await request(product_service)
-            .post(PRODUCT_PATH)
+            .post(PRODUCT_CREATE)
             .set('Authorization', `Bearer ${token}`)
-            .send({
-                name: 'Test Product',
-                description: 'Just a test',
-                price: 99.99
-            });
+            .send(productData);
 
         expect(res.statusCode).toBe(201);
+        expect(res.body.name).toBe(productData.name);
         expect(res.body.ownerId).toBe(userId);
     });
 
-    it('should delete the user and cascade delete their products', async () => {
-        const deleteRes = await request(user_service)
-            .delete(USER_DELETE_ME_PATH)
-            .set('Authorization', `Bearer ${token}`);
+    it('should verify the product is saved and belongs to the user', async () => {
+        const res = await request(product_service)
+            .get(`${PRODUCT_BY_OWNER}/${userId}`);
 
-        expect(deleteRes.statusCode).toBe(200);
-
-        const checkRes = await request(product_service)
-            .get(`${PRODUCT_BY_OWNER_PATH}/${userId}`);
-
-        expect(checkRes.statusCode).toBe(200);
-        expect(checkRes.body).toEqual([]);
+        expect(res.statusCode).toBe(200);
+        expect(Array.isArray(res.body)).toBe(true);
+        expect(res.body[0].ownerId).toBe(userId);
     });
 });
