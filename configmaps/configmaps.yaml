@@ -19,7 +19,9 @@ data:
   E400_UPDATE_PRODUCT_FAIL: "Failed to update product"
   E400_DELETE_PRODUCT_FAIL: "Failed to delete product"
   E400_DELETE_PRODUCTS_FAIL: "Failed to delete products"
+  E403_FORBIDDEN: "Not authorized to perform this action"
   E404_PRODUCT_NOT_FOUND: "Product not found"
+  E429_TOO_MANY_REQUESTS: "Too many requests"
   E500_SERVER_ERROR: "Server error"
   E500_INTENTIONAL_CRASH: "Intentional crash for testing purposes"
 ---
@@ -30,18 +32,23 @@ metadata:
   name: client-error-codes
   namespace: my-services
 data:
-  E400_CLIENT_BAD_TOKEN: "Authentication token is missing or malformed"
+  E400_CLIENT_MISSING_TOKEN: "Authentication token is missing or malformed"
+  E400_CLIENT_MALFORMED_TOKEN: "Authentication token is missing or malformed"
   E401_CLIENT_INVALID_TOKEN: "Authentication token is invalid or expired"
+  E401_CLIENT_EXPIRED_TOKEN: "Authentication token is invalid or expired"
   E400_CLIENT_USER_EXISTS: "Email already exists"
   E404_CLIENT_USER_NOT_FOUND: "User not found"
   E400_CLIENT_INVALID_ID: "Invalid id"
-  E400_CLIENT_INVALID_CREDENTIALS: "Invalid email or password"
+  E400_CLIENT_INVALID_EMAIL: "Invalid email or password"
+  E400_CLIENT_INVALID_PASSWORD: "Invalid email or password"
   E400_CLIENT_INVALID_PRODUCT_ID: "Invalid product ID format"
   E400_CLIENT_CREATE_PRODUCT_FAIL: "Failed to create product"
   E400_CLIENT_UPDATE_PRODUCT_FAIL: "Failed to update product"
   E400_CLIENT_DELETE_PRODUCT_FAIL: "Failed to delete product"
   E400_CLIENT_DELETE_PRODUCTS_FAIL: "Failed to delete products"
+  E403_CLIENT_FORBIDDEN: "Not authorized to perform this action"
   E404_CLIENT_PRODUCT_NOT_FOUND: "Product not found"
+  E429_CLIENT_TOO_MANY_REQUESTS: "Too many requests"
   E500_CLIENT_SERVER_ERROR: "Server error"
   E500_CLIENT_INTENTIONAL_CRASH: "Intentional crash for testing purposes"
 ---

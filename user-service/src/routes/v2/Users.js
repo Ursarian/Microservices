@@ -3,18 +3,24 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const User = require('../../models/user');
-const auth = require('../../middleware/auth');
 const { buildServiceUri } = require('../../utils/buildServiceUri');
 const logger = require('../../utils/logger');
+const auth = require('../../middleware/auth');
+const authorize = require('../../middleware/authorize');
+const {
+    loginRateLimiter,
+    usersRateLimiter,
+    rateLimiterFallback
+} = require('../../middleware/rateLimiter');
 
 const router = express.Router();
 
 const PRODUCT_SERVICE_URI = buildServiceUri('PRODUCT');
 
 // ROUTE - Registration
-router.post('/register', async (req, res) => {
+router.post('/register', usersRateLimiter, async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role } = req.body;
 
         // Simulate an error for testing purposes
         // if (email === 'error') {
@@ -36,7 +42,7 @@ router.post('/register', async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
 
         // Save user to database
-        const newUser = new User({ email, password: hashedPassword });
+        const newUser = new User({ email, password: hashedPassword, role: role || 'user' });
         await newUser.save();
 
         logger.info('User registered', { email });
@@ -51,7 +57,7 @@ router.post('/register', async (req, res) => {
 });
 
 // ROUTE - Login
-router.post('/login', async (req, res) => {
+router.post('/login', loginRateLimiter, async (req, res) => {
     try {
         const { email, password } = req.body;
 
@@ -67,7 +73,7 @@ router.post('/login', async (req, res) => {
             logger.error(process.env.E400_INVALID_EMAIL, { email });
             return res.status(400).json({
                 code: 'E400_INVALID_CREDENTIALS',
-                message: process.env.E400_CLIENT_INVALID_CREDENTIALS
+                message: process.env.E400_CLIENT_INVALID_EMAIL
             });
         }
 
@@ -77,12 +83,20 @@ router.post('/login', async (req, res) => {
             logger.error(process.env.E400_INVALID_PASSWORD, { email });
             return res.status(400).json({
                 code: 'E400_INVALID_CREDENTIALS',
-                message: process.env.E400_CLIENT_INVALID_CREDENTIALS
+                message: process.env.E400_CLIENT_INVALID_PASSWORD
             });
         }
 
         // Generate JWT token
-        const token = jwt.sign({ userId: user._id, email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            {
+                userId: user._id,
+                email: user.email,
+                role: user.role
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
         logger.info('User login successful', { email });
         res.status(201).json({ message: 'Login successful!', token });
@@ -96,7 +110,7 @@ router.post('/login', async (req, res) => {
 });
 
 // ROUTE - Profile (protected)
-router.get('/profile', auth, (req, res) => {
+router.get('/profile', auth, usersRateLimiter, (req, res) => {
     // res.set({
     //   'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
     //   Pragma: 'no-cache',
@@ -111,7 +125,7 @@ router.get('/profile', auth, (req, res) => {
 });
 
 // GET - Get All Users ID and Email
-router.get('/all', async (req, res) => {
+router.get('/all', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
     try {
         const users = await User.find({}, '_id email');
 
@@ -123,7 +137,7 @@ router.get('/all', async (req, res) => {
 });
 
 // GET - Get User by ID
-router.get('/:id', async (req, res) => {
+router.get('/:id([0-9a-fA-F]{24})', /*auth, authorize('user'),*/ usersRateLimiter, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
 
@@ -154,7 +168,7 @@ router.get('/:id', async (req, res) => {
 });
 
 // DELETE - Delete Me (protected)
-router.delete('/me', auth, async (req, res) => {
+router.delete('/me', auth, authorize('user'), usersRateLimiter, async (req, res) => {
     try {
         const userId = req.user.userId;
 
@@ -188,5 +202,54 @@ router.delete('/me', auth, async (req, res) => {
         });
     }
 });
+
+
+
+// TEST
+router.get('/testAPI', auth, usersRateLimiter, async (req, res) => {
+    res.status(200).json({
+        Status: 'Succeeded!',
+        UserId: req.user.userId,
+        Role: req.user.role,
+    });
+});
+
+
+
+// TEST
+router.get('/testAuthorization', auth, authorize('manager'), async (req, res) => {
+    res.status(200).json({
+        Status: 'Succeeded!',
+        UserId: req.user.userId,
+        Role: req.user.role,
+    });
+});
+
+
+
+// TEST
+router.get('/testBoth', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
+    res.status(200).json({
+        Status: 'Succeeded!',
+        UserId: req.user.userId,
+        Role: req.user.role,
+    });
+});
+
+
+
+// TEST
+router.get('/testAll', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
+    res.status(200).json({
+        Status: 'Succeeded!',
+        UserId: req.user.userId,
+        Role: req.user.role,
+    });
+});
+
+
+
+// Fallback limiter for everything else
+router.use(rateLimiterFallback);
 
 module.exports = router;

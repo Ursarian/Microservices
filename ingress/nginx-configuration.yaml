@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ingress-nginx-controller
+  namespace: ingress-nginx
+data:
+<<<<<<< HEAD
+  enable-rate-limit: "true"
+=======
+  enable-rate-limit: "false"
+>>>>>>> 22497fc39bd8875a9d8f1ed639208073dcc64653
+  limit-rps: "10"
+  limit-burst: "10"
+  limit-connections: "10"
