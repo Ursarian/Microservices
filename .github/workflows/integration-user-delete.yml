@@ -53,7 +53,7 @@ jobs:
           sleep 5
         done
 
-    - name: Run integration tests with Jest
-      run: npx jest __tests__/integration-delete-user-products.test.js --detectOpenHandles --forceExit
+    - name: Run all tests
+      run: npx jest ./__tests__/ --detectOpenHandles --forceExit
       env:
         NODE_ENV: test

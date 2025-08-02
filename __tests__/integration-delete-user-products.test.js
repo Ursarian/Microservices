@@ -11,7 +11,7 @@ const USER_DELETE_ME_PATH = `${USER_PATH}/me`;
 const PRODUCT_PATH = '/api/v2/products';
 const PRODUCT_BY_OWNER_PATH = `${PRODUCT_PATH}/by-owner`;
 
-const TEST_EMAIL = 'test@hle37.com';
+const TEST_EMAIL = `test${Date.now()}@hle37.com`;
 const TEST_PASSWORD = 'password123';
 
 describe('User deletion triggers product deletion', () => {
@@ -57,8 +57,10 @@ describe('User deletion triggers product deletion', () => {
         const deleteRes = await request(user_service)
             .delete(USER_DELETE_ME_PATH)
             .set('Authorization', `Bearer ${token}`);
-
         expect(deleteRes.statusCode).toBe(200);
+
+        // Wait for event to propagate
+        await new Promise(res => setTimeout(res, 3000));
 
         const checkRes = await request(product_service)
             .get(`${PRODUCT_BY_OWNER_PATH}/${userId}`);

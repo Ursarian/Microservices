@@ -16,7 +16,4 @@ app.use(express.json());
 app.use('/api/v1/products', v1Routes);
 app.use('/api/v2/products', v2Routes);
 
-// Fallback limiter for everything else
-app.use(rateLimiterFallback);
-
 module.exports = app;

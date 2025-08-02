@@ -5,17 +5,32 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   user-service:
     build: ./user-service
     ports:
       - "3000:3000"
     depends_on:
-      - mongo
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
     environment:
       SERVICE_NAME: user-service
       MONGO_URI: mongodb://mongo:27017/userdb
       PORT: 3000
+      AMQP: amqp://rabbitmq:5672
       PRODUCT_DOMAIN: http://product-service
       PRODUCT_PORT: 3001
       API_BASE_URL: api
@@ -30,11 +45,15 @@ services:
     ports:
       - "3001:3001"
     depends_on:
-      - mongo
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
     environment:
       SERVICE_NAME: product-service
       MONGO_URI: mongodb://mongo:27017/products
       PORT: 3001
+      AMQP: amqp://rabbitmq:5672
       USER_DOMAIN: http://user-service
       USER_PORT: 3000
       API_BASE_URL: api

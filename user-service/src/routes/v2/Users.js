@@ -139,7 +139,7 @@ router.get('/all', auth, authorize('manager'), usersRateLimiter, async (req, res
 });
 
 // GET - Get User by ID
-router.get('/id/:id([0-9a-fA-F]{24})', /*auth, authorize('user'),*/ usersRateLimiter, async (req, res) => {
+router.get('/id/:id', /*auth, authorize('user'),*/ usersRateLimiter, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
 
@@ -197,7 +197,7 @@ router.delete('/me', auth, authorize('user'), usersRateLimiter, async (req, res)
 
         await publishUserDeleted({ id: deletedUser._id, email: deletedUser.email });
 
-        res.status(200).json({ message: 'User deleted successfully (products attempted)' });
+        res.status(200).json({ message: 'User deleted successfully' });
     } catch (err) {
         logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
         res.status(500).json({
@@ -207,39 +207,35 @@ router.delete('/me', auth, authorize('user'), usersRateLimiter, async (req, res)
     }
 });
 
-
-
 // TESTS
-router.get('/testAPI', auth, usersRateLimiter, async (req, res) => {
-    res.status(200).json({
-        Status: 'Succeeded!',
-        UserId: req.user.userId,
-        Role: req.user.role,
-    });
-});
-router.get('/testAuthorization', auth, authorize('manager'), async (req, res) => {
-    res.status(200).json({
-        Status: 'Succeeded!',
-        UserId: req.user.userId,
-        Role: req.user.role,
-    });
-});
-router.get('/testBoth', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
-    res.status(200).json({
-        Status: 'Succeeded!',
-        UserId: req.user.userId,
-        Role: req.user.role,
-    });
-});
-router.get('/testAll', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
-    res.status(200).json({
-        Status: 'Succeeded!',
-        UserId: req.user.userId,
-        Role: req.user.role,
-    });
-});
-
-
+// router.get('/testAPI', auth, usersRateLimiter, async (req, res) => {
+//     res.status(200).json({
+//         Status: 'Succeeded!',
+//         UserId: req.user.userId,
+//         Role: req.user.role,
+//     });
+// });
+// router.get('/testAuthorization', auth, authorize('manager'), async (req, res) => {
+//     res.status(200).json({
+//         Status: 'Succeeded!',
+//         UserId: req.user.userId,
+//         Role: req.user.role,
+//     });
+// });
+// router.get('/testBoth', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
+//     res.status(200).json({
+//         Status: 'Succeeded!',
+//         UserId: req.user.userId,
+//         Role: req.user.role,
+//     });
+// });
+// router.get('/testAll', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
+//     res.status(200).json({
+//         Status: 'Succeeded!',
+//         UserId: req.user.userId,
+//         Role: req.user.role,
+//     });
+// });
 
 // Fallback limiter for everything else
 router.use(rateLimiterFallback);

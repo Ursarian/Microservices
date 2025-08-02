@@ -1,4 +1,3 @@
-// Mock version for the jsonwebtoken module
 jest.mock('jsonwebtoken');
 
 const auth = require('../src/middleware/auth');
@@ -43,18 +42,19 @@ describe('Auth Middleware', () => {
         expect(res.status).toHaveBeenCalledWith(401);
     });
 
-    it('returns 500 if server error', () => {
-        jwt.verify.mockImplementation(() => { throw {} });
+    it('returns 500 if unknown error occurs', () => {
+        jwt.verify.mockImplementation(() => { throw new Error('Unknown error'); });
         const req = { header: () => 'Bearer token' };
         auth(req, res, next);
         expect(res.status).toHaveBeenCalledWith(500);
     });
 
     it('calls next if token is valid', () => {
-        jwt.verify.mockReturnValue({ email: 'test@example.com', password: 'test' });
+        jwt.verify.mockReturnValue({ email: 'test@example.com', role: 'user' });
         const req = { header: () => 'Bearer validToken' };
         auth(req, res, next);
         expect(next).toHaveBeenCalled();
         expect(req.user.email).toBe('test@example.com');
+        expect(req.user.role).toBe('user');
     });
 });

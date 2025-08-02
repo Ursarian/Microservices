@@ -6,26 +6,23 @@ const WINDOW_MS = 10 * 1000;
 const CLEANUP_INTERVAL_MS = 60 * 1000;
 
 const createLimiter = (maxRequests, maxBurst, burst_cooldown) => {
-    const store = new Map();
-    const BURST_REFILL_MS = burst_cooldown || 5 * 60 * 1000;
-
     const limiter = (req, res, next) => {
         const id = req.user?.userId || req.ip;
         const now = Date.now();
 
-        if (!store.has(id)) {
-            store.set(id, {
+        if (!requestLogs.has(id)) {
+            requestLogs.set(id, {
                 timestamps: [],
                 tokens: maxBurst,
                 lastRefill: now
             });
         }
 
-        const data = store.get(id);
+        const data = requestLogs.get(id);
 
         // 1. Refill tokens
         const elapsed = now - data.lastRefill;
-        const refillCount = Math.floor(elapsed / BURST_REFILL_MS);
+        const refillCount = Math.floor(elapsed / burst_cooldown);
         if (refillCount > 0) {
             data.tokens = Math.min(data.tokens + refillCount, maxBurst);
             data.lastRefill = now;
@@ -49,7 +46,7 @@ const createLimiter = (maxRequests, maxBurst, burst_cooldown) => {
 
         // 4. Accept request
         data.timestamps.push(now);
-        store.set(id, data);
+        requestLogs.set(id, data);
         next();
     };
 

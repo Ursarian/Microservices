@@ -11,7 +11,7 @@ const USER_LOGIN = `${USER_PATH}/login`;
 const PRODUCT_CREATE = `${PRODUCT_PATH}`;
 const PRODUCT_BY_OWNER = `${PRODUCT_PATH}/by-owner`;
 
-const TEST_EMAIL = 'test@hle37.com';
+const TEST_EMAIL = `test${Date.now()}@hle37.com`;
 const TEST_PASSWORD = 'password123';
 
 describe('Create Product Integration Flow', () => {

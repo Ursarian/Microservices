@@ -4,6 +4,9 @@ jest.mock('../src/middleware/auth', () => jest.fn((req, res, next) => {
     req.user = { userId: 'user123' };
     next();
 }));
+jest.mock('../src/middleware/authorizeOwnershipOrRole', () =>
+    () => (req, res, next) => next()
+);
 
 const request = require('supertest');
 const express = require('express');
@@ -37,22 +40,22 @@ describe('API V2 Products - Unit Tests', () => {
         });
     });
 
-    describe('GET /:id', () => {
+    describe('GET /id/:id', () => {
         it('should return a product by ID', async () => {
             Product.findById.mockResolvedValue({ _id: '1', name: 'Item' });
-            const res = await request(app).get('/api/v2/products/1');
+            const res = await request(app).get('/api/v2/products/id/1');
             expect(res.statusCode).toBe(200);
         });
 
         it('should return 404 if product not found', async () => {
             Product.findById.mockResolvedValue(null);
-            const res = await request(app).get('/api/v2/products/999');
+            const res = await request(app).get('/api/v2/products/id/999');
             expect(res.statusCode).toBe(404);
         });
 
         it('should return 400 on invalid ID', async () => {
             Product.findById.mockRejectedValue({ name: 'CastError' });
-            const res = await request(app).get('/api/v2/products/bad-id');
+            const res = await request(app).get('/api/v2/products/id/bad-id');
             expect(res.statusCode).toBe(400);
         });
     });
@@ -105,12 +108,12 @@ describe('API V2 Products - Unit Tests', () => {
         });
     });
 
-    describe('PUT /:id', () => {
+    describe('PUT /id/:id', () => {
         it('should update product by id', async () => {
             Product.findByIdAndUpdate.mockResolvedValue({ _id: '1', name: 'Updated' });
 
             const res = await request(app)
-                .put('/api/v2/products/1')
+                .put('/api/v2/products/id/1')
                 .send({ name: 'Updated' });
 
             expect(res.statusCode).toBe(200);
@@ -120,7 +123,7 @@ describe('API V2 Products - Unit Tests', () => {
             Product.findByIdAndUpdate.mockResolvedValue(null);
 
             const res = await request(app)
-                .put('/api/v2/products/999')
+                .put('/api/v2/products/id/999')
                 .send({ name: 'Not found' });
 
             expect(res.statusCode).toBe(404);
@@ -130,29 +133,31 @@ describe('API V2 Products - Unit Tests', () => {
             Product.findByIdAndUpdate.mockRejectedValue(new Error('fail'));
 
             const res = await request(app)
-                .put('/api/v2/products/err')
+                .put('/api/v2/products/id/err')
                 .send({});
 
             expect(res.statusCode).toBe(400);
         });
     });
 
-    describe('DELETE /:id', () => {
+    describe('DELETE /id/:id', () => {
         it('should delete a product', async () => {
             Product.findByIdAndDelete.mockResolvedValue({ _id: '1' });
-            const res = await request(app).delete('/api/v2/products/1');
+            const res = await request(app).delete('/api/v2/products/id/1');
             expect(res.statusCode).toBe(200);
         });
 
         it('should return 404 if not found', async () => {
             Product.findByIdAndDelete.mockResolvedValue(null);
-            const res = await request(app).delete('/api/v2/products/999');
+            const res = await request(app).delete('/api/v2/products/id/999');
             expect(res.statusCode).toBe(404);
         });
 
         it('should return 400 on failure', async () => {
+            Product.findById.mockResolvedValue({ _id: 'fail', ownerId: '123' });
             Product.findByIdAndDelete.mockRejectedValue(new Error('fail'));
-            const res = await request(app).delete('/api/v2/products/fail');
+
+            const res = await request(app).delete('/api/v2/products/id/fail');
             expect(res.statusCode).toBe(400);
         });
     });
