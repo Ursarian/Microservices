@@ -20,7 +20,7 @@ router.get('/all', async (req, res) => {
 });
 
 // GET product by ID
-router.get('/:id', async (req, res) => {
+router.get('/id/:id', async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
         if (!product) {
@@ -58,7 +58,7 @@ router.post('/', async (req, res) => {
 });
 
 // PUT update product
-router.put('/:id', async (req, res) => {
+router.put('/id/:id', async (req, res) => {
     try {
         const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
@@ -83,7 +83,7 @@ router.put('/:id', async (req, res) => {
 });
 
 // DELETE product
-router.delete('/:id', async (req, res) => {
+router.delete('/id/:id', async (req, res) => {
     try {
         const deleted = await Product.findByIdAndDelete(req.params.id);
         if (!deleted) {

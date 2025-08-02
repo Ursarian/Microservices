@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { fetchAllProducts, createProduct, updateProduct, deleteProduct, fetchProductsByUser } from '../api/productApi';
 import { fetchAllUsers } from '../api/userApi';
+import { fetchAllProducts, createProduct, updateProduct, deleteProduct, fetchProductsByUser } from '../api/productApi';
 import ProductList from '../components/ProductList';
 import ProductForm from '../components/ProductForm';
+import AlertBox from '../components/AlertBox';
 import { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
@@ -11,15 +12,16 @@ function ProductPage() {
     const [editProduct, setEditProduct] = useState(null);
     const [users, setUsers] = useState([]);
     const [selectedUserId, setSelectedUserId] = useState('');
+    const [alert, setAlert] = useState({ type: '', message: '' });
     const { token } = useContext(AuthContext);
 
     useEffect(() => {
         if (!selectedUserId || selectedUserId === '*') {
-            fetchAllProducts()
+            fetchAllProducts(token)
                 .then(setProducts)
                 .catch(console.error);
         } else {
-            fetchProductsByUser(selectedUserId)
+            fetchProductsByUser(selectedUserId, token)
                 .then(setProducts)
                 .catch(console.error);
         }
@@ -38,24 +40,41 @@ function ProductPage() {
     }
 
     function handleUpdate(id, updatedProduct) {
-        updateProduct(id, updatedProduct)
+        updateProduct(id, updatedProduct, token)
             .then(p => {
                 setProducts(prev => prev.map(item => item._id === id ? p : item));
                 setEditProduct(null);
+                setAlert({ type: 'success', message: 'Update successful' });
             })
-            .catch(console.error);
+            .catch(err => {
+                const msg = err.response?.data?.message
+                    || err.message
+                    || "Unexpected response";
+                setAlert({ type: 'error', message: msg });
+                console.error(err);
+            });
     }
 
     function handleDelete(id) {
-        deleteProduct(id)
-            .then(() => setProducts(prev => prev.filter(p => p._id !== id)))
-            .catch(console.error);
+        deleteProduct(id, token)
+            .then(() => {
+                setProducts(prev => prev.filter(p => p._id !== id));
+                setAlert({ type: 'success', message: 'Deletion successful' });
+            })
+            .catch(err => {
+                const msg = err.response?.data?.message
+                    || err.message
+                    || "Unexpected response";
+                setAlert({ type: 'error', message: msg });
+                console.error(err);
+            });
     }
 
     return (
         <div style={{ padding: '2rem' }}>
             <h1>Product Catalog</h1>
             <ProductForm onAdd={handleAdd} onUpdate={handleUpdate} editProduct={editProduct} />
+            <AlertBox type={alert.type} message={alert.message} onClose={() => setAlert({})} />
             <select value={selectedUserId} onChange={e => setSelectedUserId(e.target.value)}>
                 <option value="*">-- All Products --</option>
                 {users.map(user => (

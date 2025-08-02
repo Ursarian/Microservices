@@ -8,8 +8,9 @@ import styles from './Auth.module.css';
 
 function Profile() {
     const [email, setEmail] = useState('');
-    const navigate = useNavigate();
+    const [role, setRole] = useState('');
     const [alert, setAlert] = useState({ type: '', message: '' });
+    const navigate = useNavigate();
     const { token, logout } = useContext(AuthContext);
 
     useEffect(() => {
@@ -18,6 +19,7 @@ function Profile() {
         getProfile(token)
             .then(data => {
                 setEmail(data.email);
+                setRole(data.role);
             })
             .catch(err => {
                 console.error("Profile fetch threw", err);
@@ -47,6 +49,9 @@ function Profile() {
             <h2>Welcome to your profile</h2>
             <p>
                 Email: {email}
+            </p>
+            <p>
+                Role: {role}
             </p>
             <p style={{ wordBreak: 'break-all' }}>
                 Token: <code>{token}</code>

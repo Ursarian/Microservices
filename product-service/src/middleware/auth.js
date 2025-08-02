@@ -8,13 +8,13 @@ function auth(req, res, next) {
         logger.error(process.env.E400_MISSING_TOKEN, { authHeader });
         return res.status(400).json({
             code: 'E400_BAD_TOKEN',
-            message: process.env.E400_CLIENT_BAD_TOKEN
+            message: process.env.E400_CLIENT_MISSING_TOKEN
         });
     } else if (!authHeader.startsWith('Bearer ')) {
         logger.error(process.env.E400_MALFORMED_TOKEN, { authHeader });
         return res.status(400).json({
             code: 'E400_BAD_TOKEN',
-            message: process.env.E400_CLIENT_BAD_TOKEN
+            message: process.env.E400_CLIENT_MALFORMED_TOKEN
         });
     }
 

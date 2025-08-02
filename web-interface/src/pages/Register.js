@@ -13,7 +13,9 @@ function Register() {
             await registerUser({ email, password });
             setAlert({ type: 'success', message: 'Registration successful' });
         } catch (err) {
-            const msg = err.response?.data?.message || err.message || 'Unknown error';
+            const msg = err.response?.data?.message
+                || err.message
+                || "Unexpected response";
             setAlert({ type: 'error', message: msg });
         }
     };

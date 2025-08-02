@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const { startRateLimitCleanup } = require('./middleware/rateLimiter');
+startRateLimitCleanup()
 const v1Routes = require('./routes/v1/Products');
 const v2Routes = require('./routes/v2/Products');
 

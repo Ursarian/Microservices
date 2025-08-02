@@ -4,12 +4,13 @@ const { buildServiceUri } = require('../utils/buildServiceUri');
 const PRODUCT_SERVICE_URI = buildServiceUri('PRODUCT');
 
 // GET All Products
-export async function fetchAllProducts() {
+export async function fetchAllProducts(token) {
     try {
         const res = await axios.get(`${PRODUCT_SERVICE_URI}/all`,
             {
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             }
         );
@@ -21,12 +22,13 @@ export async function fetchAllProducts() {
 }
 
 // GET Products by User ID
-export async function fetchProductsByUser(userId) {
+export async function fetchProductsByUser(userId, token) {
     try {
         const res = await axios.get(`${PRODUCT_SERVICE_URI}/by-owner/${userId}`,
             {
                 headers: {
                     'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             });
         return res.data;
@@ -55,12 +57,15 @@ export async function createProduct(product, token) {
 }
 
 // PUT Product
-export async function updateProduct(id, product) {
+export async function updateProduct(id, product, token) {
     try {
-        const res = await axios.put(`${PRODUCT_SERVICE_URI}/${id}`,
+        const res = await axios.put(`${PRODUCT_SERVICE_URI}/id/${id}`,
             product,
             {
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
             });
         return res.data;
     } catch (err) {
@@ -70,11 +75,14 @@ export async function updateProduct(id, product) {
 }
 
 // DELETE Product
-export async function deleteProduct(id) {
+export async function deleteProduct(id, token) {
     try {
-        const res = await axios.delete(`${PRODUCT_SERVICE_URI}/${id}`,
+        const res = await axios.delete(`${PRODUCT_SERVICE_URI}/id/${id}`,
             {
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
             });
         return res.data;
     } catch (err) {
