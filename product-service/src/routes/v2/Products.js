@@ -166,6 +166,4 @@ router.delete('/by-owner/:userId', /*auth, authorizeOwnershipOrMinRole('internal
 // Fallback limiter for everything else
 router.use(rateLimiterFallback);
 
-console.log(router.stack.map(r => r.route && r.route.path).filter(Boolean));
-
 module.exports = router;

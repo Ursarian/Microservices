@@ -209,7 +209,7 @@ router.delete('/me', auth, authorize('user'), usersRateLimiter, async (req, res)
 
 
 
-// TEST
+// TESTS
 router.get('/testAPI', auth, usersRateLimiter, async (req, res) => {
     res.status(200).json({
         Status: 'Succeeded!',
@@ -217,10 +217,6 @@ router.get('/testAPI', auth, usersRateLimiter, async (req, res) => {
         Role: req.user.role,
     });
 });
-
-
-
-// TEST
 router.get('/testAuthorization', auth, authorize('manager'), async (req, res) => {
     res.status(200).json({
         Status: 'Succeeded!',
@@ -228,10 +224,6 @@ router.get('/testAuthorization', auth, authorize('manager'), async (req, res) =>
         Role: req.user.role,
     });
 });
-
-
-
-// TEST
 router.get('/testBoth', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
     res.status(200).json({
         Status: 'Succeeded!',
@@ -239,10 +231,6 @@ router.get('/testBoth', auth, authorize('manager'), usersRateLimiter, async (req
         Role: req.user.role,
     });
 });
-
-
-
-// TEST
 router.get('/testAll', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
     res.status(200).json({
         Status: 'Succeeded!',
