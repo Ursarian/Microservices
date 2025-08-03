@@ -15,8 +15,7 @@ services:
       PRODUCT_PATH: products
       ENABLE_STRUCTURED_LOGS: true
       LOG_LEVEL: info
-      SERVICE_JWT_SECRET: thisIsDrill
-      USER_JWT_SECRET: thisIsAnotherDrill
+      JWT_SECRET: thisIsADrill
     depends_on:
       user-service-db:
         condition: service_healthy

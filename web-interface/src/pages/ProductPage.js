@@ -14,7 +14,6 @@ function ProductPage() {
     const [selectedUserId, setSelectedUserId] = useState('');
     const [alert, setAlert] = useState({ type: '', message: '' });
     const { token } = useContext(AuthContext);
-    console.log('[DEBUG] Token:', token);
 
     useEffect(() => {
         if (!selectedUserId || selectedUserId === '*') {
@@ -29,7 +28,7 @@ function ProductPage() {
     }, [selectedUserId]);
 
     useEffect(() => {
-        fetchAllUsers(token)
+        fetchAllUsers()
             .then(setUsers)
             .catch(console.error);
     }, []);

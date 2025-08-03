@@ -55,13 +55,12 @@ export async function loginUser(data) {
 }
 
 // GET All Users
-export async function fetchAllUsers(token) {
+export async function fetchAllUsers() {
     try {
         const res = await axios.get(`${USER_SERVICE_URI}/all`,
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
                 },
             });
         return res.data;
