@@ -6,7 +6,9 @@ const User = require('../../models/user');
 const { publishUserDeleted } = require('../../utils/eventPublisher');
 const { buildServiceUri } = require('../../utils/buildServiceUri');
 const logger = require('../../utils/logger');
+const serviceAuth = require('../../middleware/serviceAuth');
 const auth = require('../../middleware/auth');
+const signServiceToken = require('../../utils/signServiceToken');
 const authorize = require('../../middleware/authorize');
 const {
     loginRateLimiter,
@@ -17,6 +19,10 @@ const {
 const router = express.Router();
 
 const PRODUCT_SERVICE_URI = buildServiceUri('PRODUCT');
+
+///////////////////////////////////
+// USER INTERACTION FUNCTIONLITY //
+///////////////////////////////////
 
 // ROUTE - Registration
 router.post('/register', usersRateLimiter, async (req, res) => {
@@ -95,7 +101,7 @@ router.post('/login', loginRateLimiter, async (req, res) => {
                 email: user.email,
                 role: user.role
             },
-            process.env.JWT_SECRET,
+            process.env.USER_JWT_SECRET,
             { expiresIn: '1h' }
         );
 
@@ -127,7 +133,7 @@ router.get('/profile', auth, usersRateLimiter, (req, res) => {
 });
 
 // GET - Get All Users ID and Email
-router.get('/all', auth, authorize('manager'), usersRateLimiter, async (req, res) => {
+router.get('/all', auth, authorize('user'), usersRateLimiter, async (req, res) => {
     try {
         const users = await User.find({}, '_id email');
 
@@ -135,37 +141,6 @@ router.get('/all', auth, authorize('manager'), usersRateLimiter, async (req, res
     } catch (err) {
         logger.error('Failed to fetch users', { error: err.message });
         res.status(500).json({ message: 'Server error' });
-    }
-});
-
-// GET - Get User by ID
-router.get('/id/:id', /*auth, authorize('user'),*/ usersRateLimiter, async (req, res) => {
-    try {
-        const user = await User.findById(req.params.id);
-
-        if (!user) {
-            logger.error(process.env.E404_USER_NOT_FOUND, { userId: req.params.id });
-            return res.status(404).json({
-                code: 'E404_USER_NOT_FOUND',
-                message: process.env.E404_CLIENT_USER_NOT_FOUND
-            });
-        }
-
-        res.status(200).json({ _id: user._id, email: user.email });
-    } catch (err) {
-        if (err.name === 'CastError') {
-            logger.error(process.env.E400_INVALID_ID, { error: err.message, stack: err.stack });
-            return res.status(400).json({
-                code: 'E400_INVALID_ID',
-                message: process.env.E400_CLIENT_INVALID_ID
-            });
-        };
-
-        logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
-        res.status(500).json({
-            code: 'E500_SERVER_ERROR',
-            message: process.env.E500_CLIENT_SERVER_ERROR
-        });
     }
 });
 
@@ -187,18 +162,60 @@ router.delete('/me', auth, authorize('user'), usersRateLimiter, async (req, res)
 
         logger.info('User deleted account', { userId: userId });
 
-        // Request product-service to delete their products
-        // try {
-        //     await axios.delete(`${PRODUCT_SERVICE_URI}/by-owner/${userId}`);
-        //     logger.info('User deleted all their products', { userId: userId });
-        // } catch (err) {
-        //     logger.error(process.env.E400_DELETE_PRODUCTS_FAIL, { userId: userId, error: err.message, stack: err.stack });
-        // }
+        // Request product - service to delete their products
+        try {
+            const token = signServiceToken(process.env.SERVICE_NAME);
+
+            await axios.delete(`${PRODUCT_SERVICE_URI}/by-owner/${userId}`, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+
+            logger.info('User deleted all their products', { userId: userId });
+        } catch (err) {
+            logger.error(process.env.E400_DELETE_PRODUCTS_FAIL, { userId: userId, error: err.message, stack: err.stack });
+        }
 
         await publishUserDeleted({ id: deletedUser._id, email: deletedUser.email });
 
         res.status(200).json({ message: 'User deleted successfully' });
     } catch (err) {
+        logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
+        res.status(500).json({
+            code: 'E500_SERVER_ERROR',
+            message: process.env.E500_CLIENT_SERVER_ERROR
+        });
+    }
+});
+
+////////////////////////////////
+// INTER-SERVICE FUNCTIONLITY //
+////////////////////////////////
+
+// GET - Get User by ID
+router.get('/id/:id', serviceAuth, /*authorize('user'),*/ usersRateLimiter, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user) {
+            logger.error(process.env.E404_USER_NOT_FOUND, { userId: req.params.id });
+            return res.status(404).json({
+                code: 'E404_USER_NOT_FOUND',
+                message: process.env.E404_CLIENT_USER_NOT_FOUND
+            });
+        }
+
+        res.status(200).json({ _id: user._id, email: user.email });
+    } catch (err) {
+        if (err.name === 'CastError') {
+            logger.error(process.env.E400_INVALID_ID, { error: err.message, stack: err.stack });
+            return res.status(400).json({
+                code: 'E400_INVALID_ID',
+                message: process.env.E400_CLIENT_INVALID_ID
+            });
+        };
+
         logger.error(process.env.E500_SERVER_ERROR, { error: err.message, stack: err.stack });
         res.status(500).json({
             code: 'E500_SERVER_ERROR',
