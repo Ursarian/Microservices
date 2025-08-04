@@ -203,4 +203,4 @@ Please follow the existing code style and write tests for new functionality.
 
 ## License
 
-No license
+This project is licensed under the MIT License. See [LICENSE](LICENSE) for details.
