@@ -6,21 +6,27 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Profile from './pages/Profile';
 import NotFound from './components/NotFound';
-import './App.css';
+import { AuthProvider } from './context/AuthContext';
+import styles from './App.module.css';
 
 function App() {
   return (
     <Router>
-      <Header />
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/products" element={<ProductPage />} />
+      <AuthProvider>
+        <div className={styles.container}>
+          <Header />
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/products" element={<ProductPage />} />
+            <Route path="/" element={<Login />} />
 
-        {/* Catch-all route for 404 Not Found */}
-        <Route path="/*" element={<NotFound />} />
-      </Routes>
+            {/* Catch 404 Not Found routes */}
+            <Route path="/*" element={<NotFound />} />
+          </Routes>
+        </div>
+      </AuthProvider>
     </Router>
   );
 }

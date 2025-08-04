@@ -2,7 +2,7 @@
 echo Starting port-forward for Loki service...
 
 rem -- Port-forward for Loki service
-kubectl port-forward svc/loki-stack 3100 -n monitoring
+kubectl port-forward -n monitoring svc/loki-stack 8090:3100 -n monitoring
 
 rem -- Check if the command was failed
 if errorlevel 1 (

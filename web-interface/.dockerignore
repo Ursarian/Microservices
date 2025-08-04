@@ -1,5 +1,10 @@
 node_modules
+k8s
 build
-.env*
+dist
+__tests__
+coverage
+.env*.local
 *.log
+*.bat
 .git*

@@ -4,7 +4,12 @@ metadata:
   name: product-service
   namespace: my-services
 spec:
-  replicas: 1
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
   selector:
     matchLabels:
       app.kubernetes.io/name: product-service
@@ -13,16 +18,24 @@ spec:
       labels:
         app.kubernetes.io/name: product-service
     spec:
+      serviceAccountName: product-service-sa
       containers:
         - name: product-service
           image: product-service:latest
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 3001
+          resources:
+            requests:
+              cpu: "100m"
+            limits:
+              cpu: "500m"
           envFrom:
             - configMapRef:
                 name: product-service-config
             - configMapRef:
-                name: error-codes
+                name: system-error-codes
+            - configMapRef:
+                name: client-error-codes
             - secretRef:
                 name: product-service-secret

@@ -1,31 +1,56 @@
+# Error Codes ConfigMap for System
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: error-codes
+  name: system-error-codes
   namespace: my-services
 data:
-  E400_USER_INVALID_INPUT: "User input is missing or malformed"
-  E400_USER_EMAIL_INVALID: "Email format is invalid"
-  E400_USER_PASSWORD_WEAK: "Password does not meet complexity requirements"
-  E400_USER_FIELD_REQUIRED: "Required user field is missing"
-  E400_USER_PROFILE_INCOMPLETE: "User profile is incomplete or missing fields"
-  E401_USER_TOKEN_MISSING: "Authentication token is missing"
-  E401_USER_TOKEN_EXPIRED: "Authentication token has expired"
-  E401_USER_TOKEN_INVALID: "Token is malformed or signature is invalid"
-  E403_USER_ACCESS_DENIED: "User lacks permission for the action"
-  E403_USER_ROLE_UNAUTHORIZED: "Role is not allowed to access this resource"
-  E403_USER_SESSION_REVOKED: "Session was revoked manually (e.g. logout everywhere)"
-  E404_USER_NOT_FOUND: "User ID or account does not exist"
-  E404_USER_PROFILE_NOT_FOUND: "Profile data for user not found"
-  E409_USER_ALREADY_EXISTS: "User account with email/username already exists"
-  E409_USER_EMAIL_CONFLICT: "Email is already in use by another account"
-  E422_USER_VALIDATION_FAILED: "Business logic validation failed for user input"
-  E429_USER_TOO_MANY_ATTEMPTS: "Too many login or password reset attempts"
-  E500_USER_DB_ERROR: "Database query or transaction failure"
-  E500_USER_HASHING_ERROR: "Password hashing or verification error"
-  E500_USER_UNEXPECTED_ERROR: "Catch-all for uncaught errors in user service"
-  E502_USER_DEPENDENCY_FAILED: "Upstream service (e.g., email or auth) failed"
-  E503_USER_SERVICE_UNAVAILABLE: "Service is down or restarting (healthcheck fail)"
+  E400_MISSING_TOKEN: "Authentication token is missing"
+  E400_MALFORMED_TOKEN: "Authentication token is malformed"
+  E401_INVALID_TOKEN: "Authentication token is invalid"
+  E401_EXPIRED_TOKEN: "Authentication token is expired"
+  E400_USER_EXISTS: "Email already exists"
+  E404_USER_NOT_FOUND: "User not found"
+  E400_INVALID_ID: "Invalid id"
+  E400_INVALID_EMAIL: "Invalid email"
+  E400_INVALID_PASSWORD: "Invalid password"
+  E400_INVALID_PRODUCT_ID: "Invalid product ID format"
+  E400_CREATE_PRODUCT_FAIL: "Failed to create product"
+  E400_UPDATE_PRODUCT_FAIL: "Failed to update product"
+  E400_DELETE_PRODUCT_FAIL: "Failed to delete product"
+  E400_DELETE_PRODUCTS_FAIL: "Failed to delete products"
+  E403_FORBIDDEN: "Not authorized to perform this action"
+  E404_PRODUCT_NOT_FOUND: "Product not found"
+  E429_TOO_MANY_REQUESTS: "Too many requests"
+  E500_SERVER_ERROR: "Server error"
+  E500_INTENTIONAL_CRASH: "Intentional crash for testing purposes"
+---
+# Error Codes ConfigMap for Client
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: client-error-codes
+  namespace: my-services
+data:
+  E400_CLIENT_MISSING_TOKEN: "Authentication token is missing or malformed"
+  E400_CLIENT_MALFORMED_TOKEN: "Authentication token is missing or malformed"
+  E401_CLIENT_INVALID_TOKEN: "Authentication token is invalid or expired"
+  E401_CLIENT_EXPIRED_TOKEN: "Authentication token is invalid or expired"
+  E400_CLIENT_USER_EXISTS: "Email already exists"
+  E404_CLIENT_USER_NOT_FOUND: "User not found"
+  E400_CLIENT_INVALID_ID: "Invalid id"
+  E400_CLIENT_INVALID_EMAIL: "Invalid email or password"
+  E400_CLIENT_INVALID_PASSWORD: "Invalid email or password"
+  E400_CLIENT_INVALID_PRODUCT_ID: "Invalid product ID format"
+  E400_CLIENT_CREATE_PRODUCT_FAIL: "Failed to create product"
+  E400_CLIENT_UPDATE_PRODUCT_FAIL: "Failed to update product"
+  E400_CLIENT_DELETE_PRODUCT_FAIL: "Failed to delete product"
+  E400_CLIENT_DELETE_PRODUCTS_FAIL: "Failed to delete products"
+  E403_CLIENT_FORBIDDEN: "Not authorized to perform this action"
+  E404_CLIENT_PRODUCT_NOT_FOUND: "Product not found"
+  E429_CLIENT_TOO_MANY_REQUESTS: "Too many requests"
+  E500_CLIENT_SERVER_ERROR: "Server error"
+  E500_CLIENT_INTENTIONAL_CRASH: "Intentional crash for testing purposes"
 ---
 # User Service ConfigMap
 apiVersion: v1
@@ -34,11 +59,15 @@ metadata:
   name: user-service-config
   namespace: my-services
 data:
-  SERVICE_NAME: user-service
-  MONGO_URI: "mongodb://user-service-db:27017/userdb"
+  SERVICE_NAME: "user-service"
   PORT: "3000"
+  PRODUCT_DOMAIN: "http://product-service"
+  PRODUCT_PORT: "3001" 
+  API_BASE_URL: "api"
+  PRODUCT_VERSION: "v2"
+  PRODUCT_PATH: "products"
   ENABLE_STRUCTURED_LOGS: "true"
-  LOG_LEVEL: info
+  LOG_LEVEL: "info"
 ---
 # Product Service ConfigMap
 apiVersion: v1
@@ -47,22 +76,12 @@ metadata:
   name: product-service-config
   namespace: my-services
 data:
-  SERVICE_NAME: product-service
-  MONGO_URI: "mongodb://product-service-db:27017/productdb"
+  SERVICE_NAME: "product-service"
   PORT: "3001"
+  USER_DOMAIN: "http://user-service"
+  USER_PORT: "3000" 
+  API_BASE_URL: "api"
+  USER_VERSION: "v2"
+  USER_PATH: "users"
   ENABLE_STRUCTURED_LOGS: "true"
-  LOG_LEVEL: info
----
-# Web Interface ConfigMap
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: web-interface-config
-  namespace: my-services
-data:
-  REACT_APP_SERVICE_NAME: web-interface
-  REACT_APP_ENABLE_STRUCTURED_LOGS: "true"
-  REACT_APP_LOG_LEVEL: info
-  REACT_APP_API_BASE_URL: "/api"
-  REACT_APP_USER_PATH: "/users"
-  REACT_APP_PRODUCT_PATH: "/products"
+  LOG_LEVEL: "info"

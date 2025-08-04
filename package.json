@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "jest": "^30.0.5",
+    "mongoose": "^8.16.5",
+    "supertest": "^7.1.4"
+  }
+}

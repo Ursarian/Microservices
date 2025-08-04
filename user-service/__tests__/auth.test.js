@@ -1,21 +1,60 @@
+jest.mock('jsonwebtoken');
+
 const auth = require('../src/middleware/auth');
+const jwt = require('jsonwebtoken');
 
-describe('auth middleware', () => {
-    it('should return 401 if no token is provided', () => {
-        const req = {
-            header: jest.fn().mockReturnValue(null)
-        };
-        const res = {
-            status: jest.fn().mockReturnThis(),
-            json: jest.fn() // <-- Add this line
-        };
-        const next = jest.fn();
+describe('Auth Middleware', () => {
+    const res = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn()
+    };
+    const next = jest.fn();
 
+    beforeEach(() => {
+        res.status.mockClear();
+        res.json.mockClear();
+        next.mockClear();
+    });
+
+    it('returns 400 if Authorization header is missing', () => {
+        const req = { header: () => null };
         auth(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(400);
+    });
 
+    it('returns 400 if Authorization header is malformed', () => {
+        const req = { header: () => 'tokenWithoutBearer' };
+        auth(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(400);
+    });
+
+    it('returns 401 if token is invalid', () => {
+        jwt.verify.mockImplementation(() => { throw { name: 'JsonWebTokenError' }; });
+        const req = { header: () => 'Bearer fakeToken' };
+        auth(req, res, next);
         expect(res.status).toHaveBeenCalledWith(401);
-        expect(res.json).toHaveBeenCalledWith({
-            message: 'No token. Access denied.'
-        });
+    });
+
+    it('returns 401 if token is expired', () => {
+        jwt.verify.mockImplementation(() => { throw { name: 'TokenExpiredError' }; });
+        const req = { header: () => 'Bearer expiredToken' };
+        auth(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(401);
+    });
+
+    it('returns 500 if unknown error occurs', () => {
+        jwt.verify.mockImplementation(() => { throw new Error('Unknown error'); });
+        const req = { header: () => 'Bearer token' };
+        auth(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(500);
+    });
+
+    it('calls next if token is valid', () => {
+        jwt.verify.mockReturnValue({ email: 'test@example.com', role: 'user' });
+        const req = { header: () => 'Bearer validToken' };
+        auth(req, res, next);
+        expect(next).toHaveBeenCalled();
+        expect(req.user.email).toBe('test@example.com');
+        expect(req.user.role).toBe('user');
     });
 });

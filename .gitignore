@@ -1,0 +1,8 @@
+# Dependencies
+node_modules/
+
+# Coverage reports
+coverage/
+
+# Test output
+jest-test-results.json

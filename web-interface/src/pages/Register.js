@@ -1,24 +1,34 @@
 import React, { useState } from 'react';
-import { registerUser } from '../api/userAPI';
+import { registerUser } from '../api/userApi';
+import AlertBox from '../components/AlertBox';
+import styles from './Auth.module.css';
 
 function Register() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [alert, setAlert] = useState({ type: '', message: '' });
 
     const handleRegister = async () => {
         try {
             await registerUser({ email, password });
+            setAlert({ type: 'success', message: 'Registration successful' });
         } catch (err) {
-            alert('Error: ' + err);
+            const msg = err.response?.data?.message
+                || err.message
+                || "Unexpected response";
+            setAlert({ type: 'error', message: msg });
         }
     };
 
     return (
-        <div style={{ padding: '2rem' }}>
+        <div className={styles.container}>
             <h2>Register</h2>
             <input type="email" onChange={e => setEmail(e.target.value)} placeholder="Email" />
             <input type="password" onChange={e => setPassword(e.target.value)} placeholder="Password" />
-            <button onClick={handleRegister}>Submit</button>
+            <button onClick={handleRegister}>
+                Submit
+            </button>
+            <AlertBox type={alert.type} message={alert.message} onClose={() => setAlert({})} />
         </div>
     );
 }

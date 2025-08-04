@@ -1,0 +1,16 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-web-to-product
+  namespace: my-services
+spec:
+  podSelector:
+    matchLabels:
+      app: product-service
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: web-interface
+  policyTypes:
+    - Ingress

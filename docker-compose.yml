@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "check_running"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  user-service:
+    build: ./user-service
+    ports:
+      - "3000:3000"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+    environment:
+      SERVICE_NAME: user-service
+      MONGO_URI: mongodb://mongo:27017/userdb
+      PORT: 3000
+      AMQP: amqp://rabbitmq:5672
+      PRODUCT_DOMAIN: http://product-service
+      PRODUCT_PORT: 3001
+      API_BASE_URL: api
+      PRODUCT_VERSION: v2
+      PRODUCT_PATH: products
+      ENABLE_STRUCTURED_LOGS: true
+      LOG_LEVEL: info
+      SERVICE_JWT_SECRET: thisIsDrill
+      USER_JWT_SECRET: thisIsAnotherDrill
+
+  product-service:
+    build: ./product-service
+    ports:
+      - "3001:3001"
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+    environment:
+      SERVICE_NAME: product-service
+      MONGO_URI: mongodb://mongo:27017/products
+      PORT: 3001
+      AMQP: amqp://rabbitmq:5672
+      USER_DOMAIN: http://user-service
+      USER_PORT: 3000
+      API_BASE_URL: api
+      USER_VERSION: v2
+      USER_PATH: users
+      ENABLE_STRUCTURED_LOGS: true
+      LOG_LEVEL: info
+      SERVICE_JWT_SECRET: thisIsDrill
+      USER_JWT_SECRET: thisIsAnotherDrill
