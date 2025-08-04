@@ -3,9 +3,9 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
 const User = require('../../models/user');
-const { publishUserDeleted } = require('../../utils/eventPublisher');
 const { buildServiceUri } = require('../../utils/buildServiceUri');
 const logger = require('../../utils/logger');
+const { publishUserDeleted } = require('../../utils/eventPublisher');
 const serviceAuth = require('../../middleware/serviceAuth');
 const auth = require('../../middleware/auth');
 const signServiceToken = require('../../utils/signServiceToken');
@@ -163,20 +163,21 @@ router.delete('/me', auth, authorize('user'), usersRateLimiter, async (req, res)
         logger.info('User deleted account', { userId: userId });
 
         // Request product - service to delete their products
-        try {
-            const token = signServiceToken(process.env.SERVICE_NAME);
+        // try {
+        //     const token = signServiceToken(process.env.SERVICE_NAME);
 
-            await axios.delete(`${PRODUCT_SERVICE_URI}/by-owner/${userId}`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
+        //     await axios.delete(`${PRODUCT_SERVICE_URI}/by-owner/${userId}`, {
+        //         headers: {
+        //             Authorization: `Bearer ${token}`
+        //         }
+        //     });
 
-            logger.info('User deleted all their products', { userId: userId });
-        } catch (err) {
-            logger.error(process.env.E400_DELETE_PRODUCTS_FAIL, { userId: userId, error: err.message, stack: err.stack });
-        }
+        //     logger.info('User deleted all their products', { userId: userId });
+        // } catch (err) {
+        //     logger.error(process.env.E400_DELETE_PRODUCTS_FAIL, { userId: userId, error: err.message, stack: err.stack });
+        // }
 
+        // Publish User Deletion Event
         await publishUserDeleted({ id: deletedUser._id, email: deletedUser.email });
 
         res.status(200).json({ message: 'User deleted successfully' });

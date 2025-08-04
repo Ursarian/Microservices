@@ -1,13 +1,23 @@
 services:
   product-service:
-    image: product-service:latest
-    build: .
+    build: ./product-service
     ports:
-      - "3101:3001"
+      - "3001:3001"
+    depends_on:
+      - product-service-db
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
+      interval: 10s
+      timeout: 8s
+      retries: 3
+      start_period: 20s
+    restart: on-failure
     environment:
       SERVICE_NAME: product-service
-      MONGO_URI: mongodb://mongo:27017/products
+      MONGO_URI: mongodb://product-service-db:27017/productdb
       PORT: 3001
+      AMQP: amqp://rabbitmq:5672
       USER_DOMAIN: http://user-service
       USER_PORT: 3000
       API_BASE_URL: api
@@ -17,23 +27,21 @@ services:
       LOG_LEVEL: info
       SERVICE_JWT_SECRET: thisIsDrill
       USER_JWT_SECRET: thisIsAnotherDrill
-    depends_on:
-      product-service-db:
-        condition: service_healthy
-    restart: always
 
   product-service-db:
     image: mongo
     ports:
       - "27018:27017"
     volumes:
-      - mongo-data:/data/db
+      - product-service-volume:/data/db
     healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 4s
       retries: 5
+      start_period: 5s
+    restart: on-failure
 
 volumes:
-  mongo-data:
+  product-service-volume:
     driver: local

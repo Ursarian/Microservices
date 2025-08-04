@@ -14,6 +14,9 @@ const PRODUCT_BY_OWNER = `${PRODUCT_PATH}/by-owner`;
 const TEST_EMAIL = `test${Date.now()}@hle37.com`;
 const TEST_PASSWORD = 'password123';
 
+let token;
+let userId;
+
 describe('Create Product Integration Flow', () => {
 
     it('should register a user', async () => {

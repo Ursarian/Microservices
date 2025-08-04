@@ -1,15 +1,18 @@
 require('dotenv').config();
 const connectToDatabase = require('./db');
-const app = require('./app');
+const { connectToRabbit } = require('./utils/eventPublisher');
 const { startConsumer } = require('./utils/eventConsumer');
+const app = require('./app');
 
-connectToDatabase()
+Promise.all([
+    connectToDatabase(),
+    connectToRabbit(),
+])
     .then(async () => {
         try {
-            await startConsumer(); // now handled
+            await startConsumer();
         } catch (err) {
             console.error('Failed to connect to RabbitMQ:', err);
-            process.exit(1); // or skip if optional
         }
 
         const PORT = process.env.PORT || 3001;

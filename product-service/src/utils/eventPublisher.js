@@ -7,7 +7,6 @@ async function connect() {
     const connection = await amqp.connect(AMQP_URI);
     channel = await connection.createChannel();
     await channel.assertQueue('health-check', { durable: false });
-    await channel.assertQueue('user_deleted', { durable: true });
 }
 
 function getChannel() {
@@ -15,16 +14,4 @@ function getChannel() {
     return channel;
 }
 
-async function publishUserDeleted(userData) {
-    const payload = {
-        ...userData,
-        from: process.env.SERVICE_NAME
-    };
-
-    channel.sendToQueue(
-        'user_deleted',
-        Buffer.from(JSON.stringify(payload)),
-        { persistent: true });
-}
-
-module.exports = { connectToRabbit: connect, getChannel, publishUserDeleted };
+module.exports = { connectToRabbit: connect, getChannel };
