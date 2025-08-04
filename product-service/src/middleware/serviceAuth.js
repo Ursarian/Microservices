@@ -7,7 +7,7 @@ function serviceAuth(req, res, next) {
         logger.error('Missing or malformed internal service token');
         return res.status(403).json({
             code: 'E403_FORBIDDEN',
-            message: process.env.E403_CLIENT_FORBIDDEN || 'Unauthorized service request'
+            message: process.env.E403_CLIENT_FORBIDDEN
         });
     }
 

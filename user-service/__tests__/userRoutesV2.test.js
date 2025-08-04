@@ -5,6 +5,10 @@ jest.mock('axios');
 jest.mock('../src/utils/eventPublisher', () => ({
     publishUserDeleted: jest.fn()
 }));
+jest.mock('../src/middleware/serviceAuth', () => jest.fn((req, res, next) => {
+    req.user = { from: 'test-servie' };
+    next();
+}));
 jest.mock('../src/middleware/auth', () => jest.fn((req, res, next) => {
     req.user = { email: 'test@hle37.com', userId: '123', role: 'admin' };
     next();
@@ -33,6 +37,7 @@ app.use('/api/v2/users', router);
 describe('User V2 Routes Unit Test', () => {
     beforeEach(() => {
         jest.clearAllMocks();
+        process.env.SERVICE_NAME = 'test-product-service';
     });
 
     describe('POST /register', () => {
@@ -148,37 +153,6 @@ describe('User V2 Routes Unit Test', () => {
         });
     });
 
-    describe('GET /:id', () => {
-        it('should return user if found', async () => {
-            User.findById.mockResolvedValue({ _id: '123', email: 'test@hle37.com' });
-
-            const res = await request(app).get('/api/v2/users/id/123');
-            expect(res.statusCode).toBe(200);
-            expect(res.body.email).toBe('test@hle37.com');
-        });
-
-        it('should return 404 if user not found', async () => {
-            User.findById.mockResolvedValue(null);
-
-            const res = await request(app).get('/api/v2/users/id/123');
-            expect(res.statusCode).toBe(404);
-        });
-
-        it('should return 400 on invalid ID', async () => {
-            User.findById.mockImplementation(() => { throw { name: 'CastError' }; });
-
-            const res = await request(app).get('/api/v2/users/id/bad-id');
-            expect(res.statusCode).toBe(400);
-        });
-
-        it('should return 500 for generic error', async () => {
-            User.findById.mockImplementation(() => { throw new Error('Unexpected'); });
-
-            const res = await request(app).get('/api/v2/users/id/any');
-            expect(res.statusCode).toBe(500);
-        });
-    });
-
     describe('DELETE /me', () => {
         it('should delete user and products', async () => {
             User.findByIdAndDelete.mockResolvedValue({ _id: '123' });
@@ -208,6 +182,37 @@ describe('User V2 Routes Unit Test', () => {
             User.findByIdAndDelete.mockImplementation(() => { throw new Error('Crash'); });
 
             const res = await request(app).delete('/api/v2/users/me');
+            expect(res.statusCode).toBe(500);
+        });
+    });
+
+    describe('GET /:id', () => {
+        it('should return user if found', async () => {
+            User.findById.mockResolvedValue({ _id: '123', email: 'test@hle37.com' });
+
+            const res = await request(app).get('/api/v2/users/id/123');
+            expect(res.statusCode).toBe(200);
+            expect(res.body.email).toBe('test@hle37.com');
+        });
+
+        it('should return 404 if user not found', async () => {
+            User.findById.mockResolvedValue(null);
+
+            const res = await request(app).get('/api/v2/users/id/123');
+            expect(res.statusCode).toBe(404);
+        });
+
+        it('should return 400 on invalid ID', async () => {
+            User.findById.mockImplementation(() => { throw { name: 'CastError' }; });
+
+            const res = await request(app).get('/api/v2/users/id/bad-id');
+            expect(res.statusCode).toBe(400);
+        });
+
+        it('should return 500 for generic error', async () => {
+            User.findById.mockImplementation(() => { throw new Error('Unexpected'); });
+
+            const res = await request(app).get('/api/v2/users/id/any');
             expect(res.statusCode).toBe(500);
         });
     });

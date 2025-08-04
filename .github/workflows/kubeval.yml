@@ -1,0 +1,29 @@
+name: Validate Kubernetes Manifests
+
+on:
+  push:
+    branches: [main, test]
+    paths:
+      - 'k8s/**/*.yaml'
+      - '.github/workflows/kubeval.yml'
+
+jobs:
+  manifest-validation:
+    runs-on: ubuntu-latest
+    steps:
+      # Downloads this repository code into the GitHub Actions runner
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install kubeval
+        run: |
+          curl -sSL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar xz
+          chmod +x kubeval
+          sudo mv kubeval /usr/local/bin/
+
+      - name: Validate Kubernetes YAML files
+        run: |
+          for file in $(find k8s -name '*.yaml'); do
+            echo "Validating $file"
+            kubeval "$file"
+          done

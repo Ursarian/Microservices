@@ -14,6 +14,9 @@ const PRODUCT_BY_OWNER_PATH = `${PRODUCT_PATH}/by-owner`;
 const TEST_EMAIL = `test${Date.now()}@hle37.com`;
 const TEST_PASSWORD = 'password123';
 
+let token;
+let userId;
+
 describe('User deletion triggers product deletion', () => {
 
     it('should register a user', async () => {
@@ -63,7 +66,8 @@ describe('User deletion triggers product deletion', () => {
         await new Promise(res => setTimeout(res, 3000));
 
         const checkRes = await request(product_service)
-            .get(`${PRODUCT_BY_OWNER_PATH}/${userId}`);
+            .get(`${PRODUCT_BY_OWNER_PATH}/${userId}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(checkRes.statusCode).toBe(200);
         expect(checkRes.body).toEqual([]);

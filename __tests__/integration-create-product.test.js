@@ -58,7 +58,8 @@ describe('Create Product Integration Flow', () => {
 
     it('should verify the product is saved and belongs to the user', async () => {
         const res = await request(product_service)
-            .get(`${PRODUCT_BY_OWNER}/${userId}`);
+            .get(`${PRODUCT_BY_OWNER}/${userId}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(res.statusCode).toBe(200);
         expect(Array.isArray(res.body)).toBe(true);

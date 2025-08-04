@@ -74,7 +74,8 @@ describe('E2E - User and Product flow', () => {
         await new Promise(res => setTimeout(res, 3000));
 
         const check = await request(PRODUCT_SERVICE_URL)
-            .get(`/by-owner/${userId}`);
+            .get(`/by-owner/${userId}`)
+            .set('Authorization', `Bearer ${token}`);
 
         expect(check.statusCode).toBe(200);
         expect(check.body).toEqual([]);

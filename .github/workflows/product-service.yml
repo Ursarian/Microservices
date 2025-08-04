@@ -15,14 +15,14 @@ jobs:
   unit-test:
     runs-on: ubuntu-latest
 
-    services:
-      mongo:
-        image: mongo
-        ports:
-          - 27017:27017
+    # services:
+    #   mongo:
+    #     image: mongo
+    #     ports:
+    #       - 27017:27017
 
-    env:
-      MONGO_URI: mongodb://localhost:27017/product-test-db
+    # env:
+    #   MONGO_URI: mongodb://localhost:27017/product-test-db
 
     steps:
     # Downloads this repository code into the GitHub Actions runner
@@ -43,7 +43,6 @@ jobs:
       run: npm test
       working-directory: product-service
 
-    # Optional: build Docker image
     - name: Build Docker image
       run: docker build -t product-service:test .
       working-directory: product-service

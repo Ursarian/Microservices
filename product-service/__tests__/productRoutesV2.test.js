@@ -1,9 +1,14 @@
 jest.mock('../src/models/product');
 jest.mock('axios');
-jest.mock('../src/middleware/auth', () => jest.fn((req, res, next) => {
-    req.user = { userId: 'user123' };
+jest.mock('../src/middleware/serviceAuth', () => jest.fn((req, res, next) => {
+    req.user = { from: 'test-servie' };
     next();
 }));
+jest.mock('../src/middleware/auth', () => jest.fn((req, res, next) => {
+    req.user = { email: 'test@hle37.com', userId: '123', role: 'admin' };
+    next();
+}));
+jest.mock('../src/utils/signServiceToken', () => jest.fn(() => 'mock-service-token'));
 jest.mock('../src/middleware/authorizeOwnershipOrRole', () =>
     () => (req, res, next) => next()
 );

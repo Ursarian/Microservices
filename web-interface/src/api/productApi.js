@@ -6,6 +6,7 @@ const PRODUCT_SERVICE_URI = buildServiceUri('PRODUCT');
 // GET All Products
 export async function fetchAllProducts(token) {
     try {
+        console.log("productApi: ", token);
         const res = await axios.get(`${PRODUCT_SERVICE_URI}/all`,
             {
                 headers: {

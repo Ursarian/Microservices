@@ -1,4 +1,4 @@
-name: Integration Test - User Delete Cascade
+name: Integration Tests and End-to-end Tests
 
 on:
   push:
@@ -7,13 +7,15 @@ on:
     branches: [ main ]
 
 jobs:
-  integration-test:
+  inter-service-test:
     runs-on: ubuntu-latest
 
     steps:
+    # Downloads this repository code into the GitHub Actions runner
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Sets up Node.js environment
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:

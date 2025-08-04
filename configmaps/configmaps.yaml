@@ -60,9 +60,7 @@ metadata:
   namespace: my-services
 data:
   SERVICE_NAME: "user-service"
-  MONGO_URI: "mongodb://user-service-db:27017/userdb"
   PORT: "3000"
-  AMQP: "amqp://rabbitmq:5672"
   PRODUCT_DOMAIN: "http://product-service"
   PRODUCT_PORT: "3001" 
   API_BASE_URL: "api"
@@ -79,9 +77,7 @@ metadata:
   namespace: my-services
 data:
   SERVICE_NAME: "product-service"
-  MONGO_URI: "mongodb://product-service-db:27017/productdb"
   PORT: "3001"
-  AMQP: "amqp://rabbitmq:5672"
   USER_DOMAIN: "http://user-service"
   USER_PORT: "3000" 
   API_BASE_URL: "api"

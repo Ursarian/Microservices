@@ -6,7 +6,8 @@ const logger = require('../../utils/logger');
 const serviceAuth = require('../../middleware/serviceAuth');
 const auth = require('../../middleware/auth');
 const signServiceToken = require('../../utils/signServiceToken');
-const authorizeOwnershipOrMinRole = require('../../middleware/authorizeOwnershipOrRole');
+const authorize = require('../../middleware/authorize');
+const authorizeOwnershipOrRole = require('../../middleware/authorizeOwnershipOrRole');
 const {
     productRateLimiter,
     rateLimiterFallback
@@ -21,7 +22,7 @@ const USER_SERVICE_URI = buildServiceUri('USER');
 ///////////////////////////////////
 
 // GET - Get All Products
-router.get('/all', auth, authorizeOwnershipOrMinRole('user'), productRateLimiter, async (req, res) => {
+router.get('/all', auth, authorize('user'), productRateLimiter, async (req, res) => {
     try {
         const products = await Product.find();
 
@@ -37,7 +38,7 @@ router.get('/all', auth, authorizeOwnershipOrMinRole('user'), productRateLimiter
 });
 
 // GET - Get Product by ID
-router.get('/id/:id', auth, authorizeOwnershipOrMinRole('user'), productRateLimiter, async (req, res) => {
+router.get('/id/:id', auth, authorize('user'), productRateLimiter, async (req, res) => {
     try {
         const product = await Product.findById(req.params.id);
 
@@ -61,7 +62,7 @@ router.get('/id/:id', auth, authorizeOwnershipOrMinRole('user'), productRateLimi
 });
 
 // GET - Get Product by Owner ID
-router.get('/by-owner/:userId', auth, authorizeOwnershipOrMinRole('user'), productRateLimiter, async (req, res) => {
+router.get('/by-owner/:userId', auth, authorize('user'), productRateLimiter, async (req, res) => {
     try {
         const products = await Product.find({ ownerId: req.params.userId });
         res.status(200).json(products);
@@ -71,7 +72,7 @@ router.get('/by-owner/:userId', auth, authorizeOwnershipOrMinRole('user'), produ
 });
 
 // POST - Create Product
-router.post('/', auth, authorizeOwnershipOrMinRole('user'), productRateLimiter, async (req, res) => {
+router.post('/', auth, authorize('user'), productRateLimiter, async (req, res) => {
     try {
         const userId = req.user.userId;
 
@@ -109,7 +110,7 @@ router.post('/', auth, authorizeOwnershipOrMinRole('user'), productRateLimiter, 
 });
 
 // PUT - Update Product by ID
-router.put('/id/:id', auth, authorizeOwnershipOrMinRole('manager'), productRateLimiter, async (req, res) => {
+router.put('/id/:id', auth, authorizeOwnershipOrRole('manager'), productRateLimiter, async (req, res) => {
     try {
         const updated = await Product.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
@@ -136,7 +137,7 @@ router.put('/id/:id', auth, authorizeOwnershipOrMinRole('manager'), productRateL
 });
 
 // DELETE - Delete Product
-router.delete('/id/:id', auth, authorizeOwnershipOrMinRole('admin'), productRateLimiter, async (req, res) => {
+router.delete('/id/:id', auth, authorizeOwnershipOrRole('admin'), productRateLimiter, async (req, res) => {
     try {
         const deleted = await Product.findByIdAndDelete(req.params.id);
 
@@ -164,7 +165,7 @@ router.delete('/id/:id', auth, authorizeOwnershipOrMinRole('admin'), productRate
 ////////////////////////////////
 
 // DELETE - Delete Product by User ID
-router.delete('/by-owner/:userId', serviceAuth, /*authorizeOwnershipOrMinRole('internal'),*/ productRateLimiter, async (req, res) => {
+router.delete('/by-owner/:userId', serviceAuth, /*authorize('internal'),*/ productRateLimiter, async (req, res) => {
     try {
         const result = await Product.deleteMany({ ownerId: req.params.userId });
 
