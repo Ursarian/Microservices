@@ -1,3 +1,37 @@
+# User Service ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-service-config
+  namespace: my-services
+data:
+  SERVICE_NAME: "user-service"
+  PORT: "3000"
+  PRODUCT_DOMAIN: "http://product-service"
+  PRODUCT_PORT: "3001" 
+  API_BASE_URL: "api"
+  PRODUCT_VERSION: "v2"
+  PRODUCT_PATH: "products"
+  ENABLE_STRUCTURED_LOGS: "true"
+  LOG_LEVEL: "info"
+---
+# Product Service ConfigMap
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: product-service-config
+  namespace: my-services
+data:
+  SERVICE_NAME: "product-service"
+  PORT: "3001"
+  USER_DOMAIN: "http://user-service"
+  USER_PORT: "3000" 
+  API_BASE_URL: "api"
+  USER_VERSION: "v2"
+  USER_PATH: "users"
+  ENABLE_STRUCTURED_LOGS: "true"
+  LOG_LEVEL: "info"
+---
 # Error Codes ConfigMap for System
 apiVersion: v1
 kind: ConfigMap
@@ -51,37 +85,3 @@ data:
   E429_CLIENT_TOO_MANY_REQUESTS: "Too many requests"
   E500_CLIENT_SERVER_ERROR: "Server error"
   E500_CLIENT_INTENTIONAL_CRASH: "Intentional crash for testing purposes"
----
-# User Service ConfigMap
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: user-service-config
-  namespace: my-services
-data:
-  SERVICE_NAME: "user-service"
-  PORT: "3000"
-  PRODUCT_DOMAIN: "http://product-service"
-  PRODUCT_PORT: "3001" 
-  API_BASE_URL: "api"
-  PRODUCT_VERSION: "v2"
-  PRODUCT_PATH: "products"
-  ENABLE_STRUCTURED_LOGS: "true"
-  LOG_LEVEL: "info"
----
-# Product Service ConfigMap
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: product-service-config
-  namespace: my-services
-data:
-  SERVICE_NAME: "product-service"
-  PORT: "3001"
-  USER_DOMAIN: "http://user-service"
-  USER_PORT: "3000" 
-  API_BASE_URL: "api"
-  USER_VERSION: "v2"
-  USER_PATH: "users"
-  ENABLE_STRUCTURED_LOGS: "true"
-  LOG_LEVEL: "info"

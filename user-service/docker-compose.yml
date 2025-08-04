@@ -1,13 +1,37 @@
 services:
+  user-service-db:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - user-service-volume:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 4s
+      retries: 5
+      start_period: 5s
+    restart: on-failure
+
   user-service:
-    image: user-service:latest
     build: .
     ports:
-      - "3100:3000"
+      - "3000:3000"
+    depends_on:
+      - user-service-db
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 8s
+      retries: 3
+      start_period: 20s
+    restart: on-failure
     environment:
       SERVICE_NAME: user-service
-      MONGO_URI: mongodb://mongo:27017/userdb
+      MONGO_URI: mongodb://user-service-db:27017/userdb
       PORT: 3000
+      AMQP: amqp://rabbitmq:5672
       PRODUCT_DOMAIN: http://product-service
       PRODUCT_PORT: 3001
       API_BASE_URL: api
@@ -17,23 +41,7 @@ services:
       LOG_LEVEL: info
       SERVICE_JWT_SECRET: thisIsDrill
       USER_JWT_SECRET: thisIsAnotherDrill
-    depends_on:
-      user-service-db:
-        condition: service_healthy
-    restart: always
-
-  user-service-db:
-    image: mongo
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo-data:/data/db
-    healthcheck:
-      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
 
 volumes:
-  mongo-data:
+  user-service-volume:
     driver: local
