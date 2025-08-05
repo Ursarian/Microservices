@@ -16,4 +16,4 @@ No additional restrictions — You may not apply legal terms or technological me
 
 Full license text: https://creativecommons.org/licenses/by-nc-nd/4.0/legalcode
 
-Copyright © [2025] [Your Name or Organization]
+Copyright © 2025 Thomas Le
