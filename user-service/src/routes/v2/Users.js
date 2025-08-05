@@ -29,12 +29,6 @@ router.post('/register', usersRateLimiter, async (req, res) => {
     try {
         const { email, password, role } = req.body;
 
-        // Simulate an error for testing purposes
-        // if (email === 'error') {
-        //     logger.error('Registration failed', { email });
-        //     throw new Error("Intentional crash!");
-        // }
-
         // Check if user already exists
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -68,20 +62,20 @@ router.post('/login', loginRateLimiter, async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        // Simulate an error for testing purposes
-        // if (email === 'error') {
-        //     logger.error('Login failed', { email });
-        //     throw new Error("Intentional crash!");
-        // }
-
         // Find user
         const user = await User.findOne({ email });
         if (!user) {
-            logger.error(process.env.E400_INVALID_EMAIL, { email });
-            return res.status(400).json({
-                code: 'E400_INVALID_CREDENTIALS',
-                message: process.env.E400_CLIENT_INVALID_EMAIL
-            });
+            // Simulate an error for testing purposes (easter egg)
+            if (email === 'error') {
+                logger.error('Login failed', { email });
+                throw new Error("Intentional crash!");
+            } else {
+                logger.error(process.env.E400_INVALID_EMAIL, { email });
+                return res.status(400).json({
+                    code: 'E400_INVALID_CREDENTIALS',
+                    message: process.env.E400_CLIENT_INVALID_EMAIL
+                });
+            }
         }
 
         // Compare password
