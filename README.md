@@ -203,4 +203,6 @@ Please follow the existing code style and write tests for new functionality.
 
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE.md) for details.
+This project is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+You may view and download this code for testing or educational purposes, but you may not modify it, use it commercially, or redistribute it in any form.
