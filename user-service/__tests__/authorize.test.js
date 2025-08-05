@@ -1,5 +1,5 @@
+require('dotenv').config({ path: './.env.test' });
 const authorize = require('../src/middleware/authorize');
-process.env.E403_CLIENT_FORBIDDEN = 'Forbidden';
 
 describe('authorize middleware', () => {
     const res = {

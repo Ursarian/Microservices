@@ -1,3 +1,4 @@
+require('dotenv').config({ path: './.env.test' });
 jest.mock('../src/models/user');
 jest.mock('bcryptjs');
 jest.mock('jsonwebtoken');

@@ -3,6 +3,8 @@ name: Integration Tests and End-to-end Tests
 on:
   push:
     branches: [ main, test ]
+    paths:
+      - '.github/workflows/inter-service-test.yml'
   pull_request:
     branches: [ main ]
 

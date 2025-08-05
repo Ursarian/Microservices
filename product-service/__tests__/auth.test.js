@@ -1,4 +1,4 @@
-// Mock version for the jsonwebtoken module
+require('dotenv').config({ path: './.env.test' });
 jest.mock('jsonwebtoken');
 
 const auth = require('../src/middleware/auth');

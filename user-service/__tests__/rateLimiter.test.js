@@ -1,3 +1,4 @@
+require('dotenv').config({ path: './.env.test' });
 const {
     loginRateLimiter,
     usersRateLimiter,

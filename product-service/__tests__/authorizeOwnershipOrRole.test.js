@@ -1,3 +1,4 @@
+require('dotenv').config({ path: './.env.test' });
 const authorizeOwnershipOrMinRole = require('../src/middleware/authorizeOwnershipOrRole');
 const Product = require('../src/models/product');
 

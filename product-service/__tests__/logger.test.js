@@ -1,3 +1,5 @@
+require('dotenv').config({ path: './.env.test' });
+
 describe('Logger Utility', () => {
     const test_path = '../src/utils/logger';
 

@@ -1,3 +1,4 @@
+require('dotenv').config({ path: './.env.test' });
 jest.mock('../src/models/product');
 jest.mock('../src/utils/logger');
 

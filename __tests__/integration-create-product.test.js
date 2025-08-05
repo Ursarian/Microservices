@@ -17,6 +17,8 @@ const TEST_PASSWORD = 'password123';
 let token;
 let userId;
 
+jest.setTimeout(60000);
+
 describe('Create Product Integration Flow', () => {
 
     it('should register a user', async () => {

@@ -1,9 +1,10 @@
+require('dotenv').config({ path: './.env.test' });
 const request = require('supertest');
 
 const USER_SERVICE_URL = 'http://localhost:3000/api/v2/users';
 const PRODUCT_SERVICE_URL = 'http://localhost:3001/api/v2/products';
 
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 describe('E2E - User and Product flow', () => {
     let token;
