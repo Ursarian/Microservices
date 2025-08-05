@@ -2,7 +2,7 @@
 echo Starting port-forward for Grafana service...
 
 rem -- Port-forward for Grafana service
-kubectl port-forward -n monitoring svc/monitoring-grafana 8080:80
+kubectl port-forward -n monitoring svc/prometheus-stack-grafana 8080:80
 
 rem -- Check if the command was failed
 if errorlevel 1 (

@@ -2,11 +2,12 @@ require('dotenv').config();
 const connectToDatabase = require('./db');
 const { connectToRabbit } = require('./utils/eventPublisher');
 const { startConsumer } = require('./utils/eventConsumer');
+const retry = require('./utils/retry');
 const app = require('./app');
 
 Promise.all([
-    connectToDatabase(),
-    connectToRabbit(),
+    retry(connectToDatabase, { retries: 20, delay: 3000 }),
+    retry(connectToRabbit, { retries: 20, delay: 3000 }),
 ])
     .then(async () => {
         try {

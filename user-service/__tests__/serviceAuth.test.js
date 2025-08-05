@@ -1,3 +1,4 @@
+require('dotenv').config({ path: './.env.test' });
 const jwt = require('jsonwebtoken');
 const serviceAuth = require('../src/middleware/serviceAuth');
 const logger = require('../src/utils/logger');

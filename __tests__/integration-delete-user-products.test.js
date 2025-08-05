@@ -17,7 +17,7 @@ const TEST_PASSWORD = 'password123';
 let token;
 let userId;
 
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 describe('User deletion triggers product deletion', () => {
 

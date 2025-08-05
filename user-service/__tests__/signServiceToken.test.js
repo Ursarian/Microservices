@@ -1,3 +1,4 @@
+require('dotenv').config({ path: './.env.test' });
 const jwt = require('jsonwebtoken');
 const signServiceToken = require('../src/utils/signServiceToken');
 
