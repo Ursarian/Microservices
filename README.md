@@ -165,19 +165,20 @@ All workflows trigger on `push` to `main` or `test` and on pull requests.
 
 ```
 ├── user-service
+│   ├── __tests__/   # Unit tests
+│   ├── k8s/
 │   ├── src/
-│   ├── __tests__/
-│   ├── Dockerfile
-│   └── k8s/
+│   └── Dockerfile
 ├── product-service
+│   ├── __tests__/   # Unit tests
+│   ├── k8s/
 │   ├── src/
-│   ├── __tests__/
-│   ├── Dockerfile
-│   └── k8s/
+│   └── Dockerfile
 ├── web-interface
+│   ├── k8s/
 │   ├── src/
-│   ├── Dockerfile
-│   └── k8s/
+│   └── Dockerfile
+├── __tests__/      # Integration tests, end-to-end tests
 ├── k8s/            # Shared manifests
 ├── .github/workflows
 ├── docker-compose.yml
@@ -191,16 +192,8 @@ All workflows trigger on `push` to `main` or `test` and on pull requests.
 - JWT secrets: `USER_JWT_SECRET`, `SERVICE_JWT_SECRET`.
 - MongoDB credentials: `MONGO_USER`, `MONGO_PASSWORD`.
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/YourFeature`)
-3. Commit changes (`git commit -m 'Add new feature'`)
-4. Push to branch (`git push origin feature/YourFeature`)
-5. Open a Pull Request
-
-Please follow the existing code style and write tests for new functionality.
-
 ## License
 
-This project is licensed under the MIT License. See [LICENSE](LICENSE.md) for details.
+This project is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](https://creativecommons.org/licenses/by-nc-nd/4.0/).
+
+You may view and download this code for testing or educational purposes, but you may not modify it, use it commercially, or redistribute it in any form.
