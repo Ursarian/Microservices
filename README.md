@@ -69,6 +69,13 @@ Detailed flows are documented under `docs/sequence-diagrams` (if populated). Key
 
 <img width="1336" height="2338" alt="Sequence Diagram" src="https://github.com/user-attachments/assets/5c2a288f-a0db-45fd-b059-7ad71d84efa1" />
 
+## Detailed Documentation
+
+For a complete, 25-page deep-dive into the system’s architecture, Docker/Kubernetes
+deployment, CI/CD, and extra features, see:
+
+**[📄 Thomas Le – Microservices](docs/ThomasLe_Microservices.pdf)**
+
 ## Getting Started
 
 ### Prerequisites
