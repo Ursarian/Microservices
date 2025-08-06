@@ -165,19 +165,20 @@ All workflows trigger on `push` to `main` or `test` and on pull requests.
 
 ```
 ├── user-service
+│   ├── __tests__/   # Unit tests
+│   ├── k8s/
 │   ├── src/
-│   ├── __tests__/
-│   ├── Dockerfile
-│   └── k8s/
+│   └── Dockerfile
 ├── product-service
+│   ├── __tests__/   # Unit tests
+│   ├── k8s/
 │   ├── src/
-│   ├── __tests__/
-│   ├── Dockerfile
-│   └── k8s/
+│   └── Dockerfile
 ├── web-interface
+│   ├── k8s/
 │   ├── src/
-│   ├── Dockerfile
-│   └── k8s/
+│   └── Dockerfile
+├── __tests__/      # Integration tests, end-to-end tests
 ├── k8s/            # Shared manifests
 ├── .github/workflows
 ├── docker-compose.yml
