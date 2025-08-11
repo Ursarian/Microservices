@@ -6,8 +6,8 @@ const retry = require('./utils/retry');
 const app = require('./app');
 
 Promise.all([
-    retry(connectToDatabase, { retries: 20, delay: 3000 }),
-    retry(connectToRabbit, { retries: 20, delay: 3000 }),
+    retry(connectToDatabase, { retries: 100, delay: 3000 }),
+    retry(connectToRabbit, { retries: 100, delay: 3000 }),
 ])
     .then(async () => {
         try {

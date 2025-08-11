@@ -112,6 +112,16 @@ describe('User V2 Routes Unit Test', () => {
             expect(res.body.token).toBe('mocked.jwt.token');
         });
 
+        it('should return 500 if simulation throws error', async () => {
+            User.findOne.mockResolvedValue(null);
+
+            const res = await request(app)
+                .post('/api/v2/users/login')
+                .send({ email: 'error', password: 'password' });
+
+            expect(res.statusCode).toBe(500);
+        });
+
         it('should return 500 if login throws error', async () => {
             User.findOne.mockImplementation(() => {
                 throw new Error('Simulated login failure');
