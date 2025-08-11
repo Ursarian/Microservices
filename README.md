@@ -13,19 +13,20 @@ _A Service Oriented Architecture Final Project_
 3. [Architecture & Design](#architecture--design)
    - [System Context](#system-context)
    - [Sequence Diagrams](#sequence-diagrams)
-4. [Getting Started](#getting-started)
+4. [Detailed Documentation](#Detailed-Documentation)
+5. [Getting Started](#getting-started)
    - [Prerequisites](#prerequisites)
    - [Docker Compose Setup](#docker-compose-setup)
    - [Kubernetes Deployment](#kubernetes-deployment)
-5. [Running Tests](#running-tests)
+6. [Running Tests](#running-tests)
    - [Unit Tests](#unit-tests)
    - [Integration Tests](#integration-tests)
    - [End-to-End Tests](#end-to-end-tests)
-6. [CI/CD Pipeline](#cicd-pipeline)
-7. [Directory Structure](#directory-structure)
-8. [Configuration & Secrets](#configuration--secrets)
-9. [Contributing](#contributing)
-10. [License](#license)
+7. [CI/CD Pipeline](#cicd-pipeline)
+8. [Directory Structure](#directory-structure)
+9. [Configuration & Secrets](#configuration--secrets)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ---
 
@@ -68,6 +69,13 @@ Detailed flows are documented under `docs/sequence-diagrams` (if populated). Key
 - **User Deletion & Cascade Delete**
 
 <img width="1336" height="2338" alt="Sequence Diagram" src="https://github.com/user-attachments/assets/5c2a288f-a0db-45fd-b059-7ad71d84efa1" />
+
+## Detailed Documentation
+
+For a complete, 25-page deep-dive into the system’s architecture, Docker/Kubernetes
+deployment, CI/CD, and extra features, see:
+
+**[📄 Thomas Le – Microservices](docs/ThomasLe_Microservices.pdf)**
 
 ## Getting Started
 
